@@ -3,7 +3,7 @@ import React from 'react';
 export default function SelectActivity(props) {
   return (
     <>
-      <h2 className="ui header">Select Activity</h2>
+      <h2 className="ui header">Select the Activity</h2>
       <div className="ui segment">
         <form className="ui form">
           <div className="two fields">
