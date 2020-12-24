@@ -3,6 +3,10 @@ import SelectActivity from './pages/select-activity';
 
 export default class App extends React.Component {
   render() {
-    return <SelectActivity />;
+    return (
+      <div className="container">
+        <SelectActivity />
+      </div>
+    );
   }
 }
