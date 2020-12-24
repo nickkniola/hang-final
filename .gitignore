@@ -4,3 +4,5 @@ node_modules
 .vscode
 *.log
 .env
+server/public/semantic.min.css
+server/public/semantic.min.js

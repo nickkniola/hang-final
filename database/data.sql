@@ -22,4 +22,4 @@ insert into "Messages" ("messageContent")
             ('Fine.');
 
 insert into "Activities" ("googlePlacesLink", "googleMapsLink", "specificActivity", "location", "date", "time")
-     values ('https://maps.googleapis.com/maps/api/place/textsearch/json?query=salad+restaurants+in+koreatown+los+angles+California&key=AIzaSyBgvcu4EJREAxTKVZb4AyltSAmDvgk7xyg', 'https://www.google.com/maps/embed/v1/place?key=AIzaSyBgvcu4EJREAxTKVZb4AyltSAmDvgk7xyg&q=ChIJeZ4SR9XHwoARyimtqxv-cCg', 'restaurant', 'sweetgreen', '01/01/2021', '1PM');
+     values ('https://maps.googleapis.com/maps/api/place/textsearch/json?query=salad+restaurants+in+koreatown+los+angles+California&key=', 'https://www.google.com/maps/embed/v1/place?key=', 'restaurant', 'sweetgreen', '01/01/2021', '1PM');
