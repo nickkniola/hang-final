@@ -6,7 +6,7 @@ drop schema "public" cascade;
 
 create schema "public";
  CREATE TABLE "Users" (
-	"userId" serial NOT NULL,
+	"hostId" serial NOT NULL,
 	"firstName" TEXT NOT NULL,
 	"lastName" TEXT NOT NULL,
 	"email" TEXT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "Messages" (
 	"messageId" serial NOT NULL,
 	"messageContent" TEXT NOT NULL,
 	"hostId" integer NOT NULL,
-	"guestId" integer NOT NULL,
+	"guestId" integer,
 	CONSTRAINT "Messages_pk" PRIMARY KEY ("messageId")
 ) WITH (
   OIDS=FALSE

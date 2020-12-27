@@ -24,27 +24,33 @@ export default class SelectActivity extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    // GET request to backend server checking if matching activity exists
+    fetch('/api/activities')
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(() => console.error('An unexpected error occurred'));
+    // then fetch to Google Places API
     const city = this.state.city.replaceAll(' ', '+');
     const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
     const state = this.state.state.replaceAll(' ', '+');
     const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
     const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    fetch(proxyUrl + requestSearchText)
-      .then(res => res.json())
-      .then(data => {
-        const arr = data.results;
-        for (let i = 0; i < arr.length - 1; i++) {
-          const location = arr[i];
-          if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
-            this.setState({
-              responseLocation: location
-            });
-          }
-        }
+    // fetch(proxyUrl + requestSearchText)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     const arr = data.results;
+    //     for (let i = 0; i < arr.length - 1; i++) {
+    //       const location = arr[i];
+    //       if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
+    //         this.setState({
+    //           responseLocation: location
+    //         });
+    //       }
+    //     }
 
-      })
-      .catch(() => console.error('An unexpected error occurred'));
+    //   })
+    //   .catch(() => console.error('An unexpected error occurred'));
   }
 
   render() {
