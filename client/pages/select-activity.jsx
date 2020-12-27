@@ -10,7 +10,8 @@ export default class SelectActivity extends React.Component {
       date: '',
       activityType: '',
       preferredActivity: '',
-      responseLocation: ''
+      responseLocation: '',
+      activityObject: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,33 +25,46 @@ export default class SelectActivity extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    // GET request to backend server checking if matching activity exists
+    // GET request to backend server checking if a matching activity exists
     fetch('/api/activities')
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].googlePlacesLink.toLowerCase().replaceAll('+', ' ').includes(this.state.city.toLowerCase()) && data[i].googlePlacesLink.toLowerCase().replaceAll('+', ' ').includes(this.state.state.toLowerCase()) && this.state.activityType === data[i].label) {
+            this.setState({
+              activityObject: data[i]
+            });
+            return;
+          }
+        }
+      })
       .catch(() => console.error('An unexpected error occurred'));
-    // then fetch to Google Places API
-    const city = this.state.city.replaceAll(' ', '+');
-    const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
-    const state = this.state.state.replaceAll(' ', '+');
-    const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
-    const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    // fetch(proxyUrl + requestSearchText)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     const arr = data.results;
-    //     for (let i = 0; i < arr.length - 1; i++) {
-    //       const location = arr[i];
-    //       if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
-    //         this.setState({
-    //           responseLocation: location
-    //         });
-    //       }
-    //     }
 
-    //   })
-    //   .catch(() => console.error('An unexpected error occurred'));
+    if (!this.state.activityObject) {
+      console.log('didnt work');
+      // then fetch to Google Places API
+      const city = this.state.city.replaceAll(' ', '+');
+      const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
+      const state = this.state.state.replaceAll(' ', '+');
+      const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
+      const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      // fetch(proxyUrl + requestSearchText)
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     const arr = data.results;
+      //     for (let i = 0; i < arr.length - 1; i++) {
+      //       const location = arr[i];
+      //       if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
+      //         this.setState({
+      //           responseLocation: location
+      //         });
+      //       }
+      //     }
+
+      //   })
+      //   .catch(() => console.error('An unexpected error occurred'));
+    }
   }
 
   render() {
@@ -83,9 +97,9 @@ export default class SelectActivity extends React.Component {
               <label htmlFor="activityType">Activity Type</label>
               <select type="menu" name="activityType" id="activityType" value={this.state.activityType} onChange={this.handleChange} required >
                 <option value="">Select Activity...</option>
-                <option name="food" value="food">Food</option>
-                <option name="museum" value="museum">Museum</option>
-                <option name="sports" value="sports">Sports</option>
+                <option name="food" value="Food">Food</option>
+                <option name="museum" value="Museum">Museum</option>
+                <option name="sports" value="Sports">Sports</option>
               </select>
             </div>
             <div className="field">
