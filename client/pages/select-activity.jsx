@@ -25,6 +25,7 @@ export default class SelectActivity extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const databaseFetchSuccess = true;
     // GET request to backend server checking if a matching activity exists
     fetch('/api/activities')
       .then(response => response.json())
@@ -38,33 +39,50 @@ export default class SelectActivity extends React.Component {
           }
         }
       })
+      .then(() => {
+        console.log('runs');
+
+        if (!this.state.activityObject) {
+          this.fetchGooglePlacesAPI();
+        }
+      })
       .catch(() => console.error('An unexpected error occurred'));
+  }
 
-    if (!this.state.activityObject) {
-      console.log('didnt work');
-      // then fetch to Google Places API
-      const city = this.state.city.replaceAll(' ', '+');
-      const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
-      const state = this.state.state.replaceAll(' ', '+');
-      const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
-      const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-      // fetch(proxyUrl + requestSearchText)
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     const arr = data.results;
-      //     for (let i = 0; i < arr.length - 1; i++) {
-      //       const location = arr[i];
-      //       if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
-      //         this.setState({
-      //           responseLocation: location
-      //         });
-      //       }
-      //     }
+  fetchGooglePlacesAPI() {
+    console.log('enters request to google');
+    //  fetch to Google Places API
+    const city = this.state.city.replaceAll(' ', '+');
+    const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
+    const state = this.state.state.replaceAll(' ', '+');
+    const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
+    const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    fetch(proxyUrl + requestSearchText)
+      .then(response => response.json())
+      .then(data => {
+        const arr = data.results;
+        for (let i = 0; i < arr.length; i++) {
+          const location = arr[i];
+          if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
+            this.setState({
+              responseLocation: location
+            });
+            return;
+          }
+        }
 
-      //   })
-      //   .catch(() => console.error('An unexpected error occurred'));
-    }
+      })
+      .then(() => {
+        let activityAction = 'Eat at';
+        if (this.state.activityType === 'Sports') {
+          activityAction = `Play ${this.state.preferredActivity} at`;
+        } else if (this.state.activityType === 'Museum') {
+          activityAction = 'Visit';
+        }
+        console.log(`${this.state.activityType} with Another User. ${activityAction} ${this.state.responseLocation.name} located at: ${this.state.responseLocation.formatted_address} on ${this.state.date} at 1PM.`);
+      })
+      .catch(() => console.error('An unexpected error occurred'));
   }
 
   render() {
