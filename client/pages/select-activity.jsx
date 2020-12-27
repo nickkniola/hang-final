@@ -23,7 +23,12 @@ export default class SelectActivity extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    // const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${this.state.preferredActivity}+${this.state.activityType}+in+${this.state.neighborhood}+${this.state.city}+${this.state.state}${process.env.GOOGLE_PLACES_API_KEY}`;
+    const city = this.state.city.replaceAll(' ', '+');
+    const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
+    const state = this.state.state.replaceAll(' ', '+');
+    const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
+    const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+    fetch(requestSearchText);
   }
 
   render() {
@@ -34,35 +39,36 @@ export default class SelectActivity extends React.Component {
           <form className="ui form" onSubmit={this.handleSubmit}>
             <div className="two fields">
               <div className="field">
-                <label>City</label>
-                <input type="text" name="city" placeholder="ex. Chicago" value={this.state.city} onChange={this.handleChange} />
+                <label htmlFor="city" >City</label>
+                <input type="text" name="city" id="city" placeholder="ex. Chicago" value={this.state.city} onChange={this.handleChange} />
               </div>
               <div className="field">
-                <label>Neighborhood</label>
-                <input type="text" name="neighborhood" placeholder="ex. Uptown" value={this.state.neighborhood} onChange={this.handleChange} />
+                <label htmlFor="neighborhood" >Neighborhood</label>
+                <input type="text" name="neighborhood" id="neighborhood" placeholder="ex. Uptown" value={this.state.neighborhood} onChange={this.handleChange} />
               </div>
             </div>
             <div className="field">
-              <label>State</label>
-              <input type="text" name="state" placeholder="ex. Illinois" value={this.state.state} onChange={this.handleChange} />
+              <label htmlFor="state">State</label>
+              <input type="text" name="state" id="state" placeholder="ex. Illinois" value={this.state.state} onChange={this.handleChange} />
             </div>
             <div className="field">
-              <label>Date</label>
-              <input type="date" name="date" id="start" placeholder="yyyy-mm-dd"
+              <label htmlFor="date">Date</label>
+              <input type="date" name="date" id="date" placeholder="yyyy-mm-dd"
                 value={this.state.date} onChange={this.handleChange}
                 min="2021-01-01" max="2030-01-01" />
             </div>
             <div className="field">
-              <label>Activity Type</label>
-                  <select type="menu" name="activityType" value={this.state.activityType} onChange={this.handleChange} >
-                    <option name="food" value="food">Food</option>
-                    <option name="museum" value="museum">Museum</option>
-                    <option name="sports" value="sports">Sports</option>
-                  </select>
+              <label htmlFor="activityType">Activity Type</label>
+              <select type="menu" name="activityType" id="activityType" value={this.state.activityType} onChange={this.handleChange} required >
+                <option value="">Select Activity...</option>
+                <option name="food" value="food">Food</option>
+                <option name="museum" value="museum">Museum</option>
+                <option name="sports" value="sports">Sports</option>
+              </select>
             </div>
             <div className="field">
-              <label>Preferred Activity</label>
-              <input type="text" name="preferredActivity" placeholder="ex. Tennis" value={this.state.preferredActivity} onChange={this.handleChange} />
+              <label htmlFor="preferredActivity" >Preferred Activity</label>
+              <input type="text" name="preferredActivity" id="preferredActivity" placeholder="ex. Tennis" value={this.state.preferredActivity} onChange={this.handleChange} />
             </div>
             <button className="ui primary button" type='submit'>Submit</button>
           </form>
