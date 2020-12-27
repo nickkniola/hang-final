@@ -9,7 +9,8 @@ export default class SelectActivity extends React.Component {
       state: '',
       date: '',
       activityType: '',
-      preferredActivity: ''
+      preferredActivity: '',
+      responseLocation: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,7 +29,22 @@ export default class SelectActivity extends React.Component {
     const state = this.state.state.replaceAll(' ', '+');
     const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
     const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-    fetch(requestSearchText);
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    fetch(proxyUrl + requestSearchText)
+      .then(res => res.json())
+      .then(data => {
+        const arr = data.results;
+        for (let i = 0; i < arr.length - 1; i++) {
+          const location = arr[i];
+          if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
+            this.setState({
+              responseLocation: location
+            });
+          }
+        }
+
+      })
+      .catch(() => console.error('An unexpected error occurred'));
   }
 
   render() {
