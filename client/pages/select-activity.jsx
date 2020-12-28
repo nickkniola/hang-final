@@ -36,53 +36,30 @@ export default class SelectActivity extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        this.setState({
-          activityObject: data[0]
-        });
+        if (data[0]) {
+          this.setState({
+            activityObject: data[0]
+          });
+        } else {
+          this.setState({
+            responseLocation: data
+          });
+        }
       })
       .then(() => {
         let activityAction = 'Eat at';
+        let firstName = this.state.activityObject.firstName;
+        let location = this.state.activityObject.location;
+        if (this.state.responseLocation) {
+          firstName = 'Another User';
+          location = this.state.responseLocation.name;
+        }
         if (this.state.activityType === 'Sports') {
           activityAction = `Play ${this.state.preferredActivity} at`;
         } else if (this.state.activityType === 'Museum') {
           activityAction = 'Visit';
         }
-        console.log(`${this.state.activityType} with ${this.state.activityObject.firstName}. ${activityAction} ${this.state.activityObject.location} on ${this.state.date} at 1PM.`);
-      })
-      .catch(() => console.error('An unexpected error occurred'));
-  }
-
-  fetchGooglePlacesAPI() {
-    //  fetch to Google Places API
-    const city = this.state.city.replaceAll(' ', '+');
-    const neighborhood = this.state.neighborhood.replaceAll(' ', '+');
-    const state = this.state.state.replaceAll(' ', '+');
-    const preferredActivity = this.state.preferredActivity.replaceAll(' ', '+');
-    const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${this.state.activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    fetch(proxyUrl + requestSearchText)
-      .then(response => response.json())
-      .then(data => {
-        const arr = data.results;
-        for (let i = 0; i < arr.length; i++) {
-          const location = arr[i];
-          if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
-            this.setState({
-              responseLocation: location
-            });
-            return;
-          }
-        }
-
-      })
-      .then(() => {
-        let activityAction = 'Eat at';
-        if (this.state.activityType === 'Sports') {
-          activityAction = `Play ${this.state.preferredActivity} at`;
-        } else if (this.state.activityType === 'Museum') {
-          activityAction = 'Visit';
-        }
-        console.log(`${this.state.activityType} with Another User. ${activityAction} ${this.state.responseLocation.name} on ${this.state.date} at 1PM.`);
+        console.log(`${this.state.activityType} with ${firstName}. ${activityAction} ${location} on ${this.state.date} at 1PM.`);
       })
       .catch(() => console.error('An unexpected error occurred'));
   }

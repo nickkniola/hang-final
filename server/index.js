@@ -2,6 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const pg = require('pg');
+const fetch = require('node-fetch');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL
@@ -13,7 +14,6 @@ app.use(staticMiddleware);
 app.use(express.json());
 
 app.post('/api/activities', (req, res, next) => {
-  console.log('req.body', req.body);
   const city = req.body.city.replaceAll(' ', '+');
   const state = req.body.state.replaceAll(' ', '+');
   const activityType = req.body.activityType;
@@ -30,14 +30,31 @@ app.post('/api/activities', (req, res, next) => {
   const params = [city, state, activityType];
   db.query(sql, params)
     .then(result => {
-      console.log(result.rows);
       if (result.rows.length) {
-        console.log('res.json(result.rows)');
         res.json(result.rows);
         return;
       }
-      // fetch
-      console.log('fetch');
+      const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
+      const preferredActivity = req.body.preferredActivity.replaceAll(' ', '+');
+      const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+      fetch(requestSearchText)
+        .then(response => response.json())
+        .then(data => {
+          const arr = data.results;
+          for (let i = 0; i < arr.length; i++) {
+            const location = arr[i];
+            if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
+              res.json(location);
+              return;
+            }
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).json({
+            error: 'an unexpected error occurred'
+          });
+        });
     })
     .catch(err => {
       console.error(err);
