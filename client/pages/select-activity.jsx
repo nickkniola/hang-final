@@ -26,24 +26,21 @@ export default class SelectActivity extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     // GET request to backend server checking if a matching activity exists
-    fetch('/api/activities')
+    const formData = this.state;
+    fetch('/api/activities', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
       .then(response => response.json())
       .then(data => {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].googlePlacesLink.toLowerCase().replaceAll('+', ' ').includes(this.state.city.toLowerCase()) && data[i].googlePlacesLink.toLowerCase().replaceAll('+', ' ').includes(this.state.state.toLowerCase()) && this.state.activityType === data[i].label) {
-            this.setState({
-              activityObject: data[i]
-            });
-            return;
-          }
-        }
+        this.setState({
+          activityObject: data[0]
+        });
       })
       .then(() => {
-        if (!this.state.activityObject) {
-          this.fetchGooglePlacesAPI();
-          return;
-        }
-
         let activityAction = 'Eat at';
         if (this.state.activityType === 'Sports') {
           activityAction = `Play ${this.state.preferredActivity} at`;
