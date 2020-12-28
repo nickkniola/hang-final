@@ -33,7 +33,6 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "node": "^15.4.0",
     "node-fetch": "^2.6.1",
     "pg": "^8.5.1",
     "react": "^17.0.1",
