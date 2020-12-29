@@ -44,18 +44,21 @@ export default class SelectActivity extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        if (data[0]) {
+        if (data.activityObject) {
           this.setState({
-            activityObject: data[0]
+            activityObject: data.activityObject,
+            activityType: data.activityType
           });
-        } else if (data.business_status) {
+        } else if (data.responseLocation) {
           this.setState({
-            responseLocation: data
+            responseLocation: data.responseLocation,
+            activityType: data.activityType
           });
         }
       })
       .then(() => {
         if (!this.state.responseLocation && !this.state.activityObject) {
+          // eslint-disable-next-line no-console
           console.log('No matching activity found. Please try again.');
           return;
         }
@@ -67,10 +70,15 @@ export default class SelectActivity extends React.Component {
           location = this.state.responseLocation.name;
         }
         if (this.state.activityType === 'Sports') {
-          activityAction = `Play ${this.state.preferredActivity} at`;
+          if (this.state.preferredActivity) {
+            activityAction = `Play ${this.state.preferredActivity} at`;
+          } else {
+            activityAction = 'Play at';
+          }
         } else if (this.state.activityType === 'Museum') {
           activityAction = 'Visit';
         }
+        // eslint-disable-next-line no-console
         console.log(`${this.state.activityType} with ${firstName}. ${activityAction} ${location} on ${this.state.date} at 1PM.`);
       })
       .catch(() => console.error('An unexpected error occurred'));
