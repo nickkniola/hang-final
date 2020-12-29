@@ -40,13 +40,17 @@ export default class SelectActivity extends React.Component {
           this.setState({
             activityObject: data[0]
           });
-        } else {
+        } else if (data.business_status) {
           this.setState({
             responseLocation: data
           });
         }
       })
       .then(() => {
+        if (!this.state.responseLocation && !this.state.activityObject) {
+          console.log('No matching activity found. Please try again.');
+          return;
+        }
         let activityAction = 'Eat at';
         let firstName = this.state.activityObject.firstName;
         let location = this.state.activityObject.location;

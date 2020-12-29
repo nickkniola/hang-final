@@ -3,6 +3,7 @@ const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const pg = require('pg');
 const fetch = require('node-fetch');
+const errorMiddleware = require('./error-middleware');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL
@@ -37,32 +38,22 @@ app.post('/api/activities', (req, res, next) => {
       const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
       const preferredActivity = req.body.preferredActivity.replaceAll(' ', '+');
       const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-      fetch(requestSearchText)
+      return fetch(requestSearchText)
         .then(response => response.json())
         .then(data => {
           const arr = data.results;
-          for (let i = 0; i < arr.length; i++) {
-            const location = arr[i];
-            if (location.business_status === 'OPERATIONAL' && location.rating >= 4) {
-              res.json(location);
-              return;
-            }
+          const location = arr.find(location => location.business_status === 'OPERATIONAL' && location.rating >= 4);
+          if (!location) {
+            res.json({});
+            return;
           }
-        })
-        .catch(err => {
-          console.error(err);
-          res.status(500).json({
-            error: 'an unexpected error occurred'
-          });
+          res.json(location);
         });
     })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({
-        error: 'an unexpected error occurred'
-      });
-    });
+    .catch(err => next(err));
 });
+
+app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
   // eslint-disable-next-line no-console
