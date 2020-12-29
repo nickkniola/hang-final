@@ -11,15 +11,23 @@ export default class SelectActivity extends React.Component {
       activityType: '',
       preferredActivity: '',
       responseLocation: '',
-      activityObject: ''
+      activityObject: '',
+      activeView: 'Pairing'
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
+    });
+  }
+
+  handleMenuClick(event) {
+    this.setState({
+      activeView: event.target.textContent
     });
   }
 
@@ -69,20 +77,23 @@ export default class SelectActivity extends React.Component {
   }
 
   render() {
+    const activeView = this.state.activeView;
     return (
       <>
         <div className="ui menu">
           <a className="item">
             <img src="/images/hang_logo.png"></img>
           </a>
-          <a className="item">
+          <a className="item" onClick={this.handleMenuClick}>
             Pairing
           </a>
-          <a className="item">
+          <a className="item" onClick={this.handleMenuClick}>
             Random
           </a>
         </div>
-        <h2 className="ui header secondary-header">Select the Activity</h2>
+        <h2 className="ui header secondary-header">
+          {activeView === 'Pairing' ? 'Select Activity' : 'Random Activity'}
+        </h2>
         <div className="ui segment">
           <form className="ui form" onSubmit={this.handleSubmit}>
             <div className="two fields">
@@ -105,20 +116,28 @@ export default class SelectActivity extends React.Component {
                 value={this.state.date} onChange={this.handleChange}
                 min="2021-01-01" max="2030-01-01" />
             </div>
-            <div className="field">
-              <label htmlFor="activityType">Activity Type</label>
-              <select type="menu" name="activityType" id="activityType" value={this.state.activityType} onChange={this.handleChange} required >
-                <option value="">Select Activity...</option>
-                <option name="food" value="Food">Food</option>
-                <option name="museum" value="Museum">Museum</option>
-                <option name="sports" value="Sports">Sports</option>
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="preferredActivity" >Preferred Activity</label>
-              <input type="text" name="preferredActivity" id="preferredActivity" placeholder="ex. Tennis" value={this.state.preferredActivity} onChange={this.handleChange} />
-            </div>
-            <button className="ui primary button" type='submit'>Submit</button>
+
+            { activeView === 'Pairing' &&
+              <>
+                <div className="field">
+                  <label htmlFor="activityType">Activity Type</label>
+                  <select type="menu" name="activityType" id="activityType" value={this.state.activityType} onChange={this.handleChange} required >
+                    <option value="">Select Activity...</option>
+                    <option name="food" value="Food">Food</option>
+                    <option name="museum" value="Museum">Museum</option>
+                    <option name="sports" value="Sports">Sports</option>
+                  </select>
+                </div>
+                <div className="field">
+                  <label htmlFor="preferredActivity" >Preferred Activity</label>
+                  <input type="text" name="preferredActivity" id="preferredActivity" placeholder="ex. Tennis" value={this.state.preferredActivity} onChange={this.handleChange} />
+                </div>
+              </>
+            }
+
+            <button className="ui primary button" type='submit'>
+              {activeView === 'Pairing' ? 'Submit' : 'Randomize'}
+            </button>
           </form>
         </div>
 
