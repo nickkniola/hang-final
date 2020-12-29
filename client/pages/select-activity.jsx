@@ -71,6 +71,17 @@ export default class SelectActivity extends React.Component {
   render() {
     return (
       <>
+        <div className="ui menu">
+          <a className="item">
+            <img src="/images/hang_logo.png"></img>
+          </a>
+          <a className="item">
+            Pairing
+          </a>
+          <a className="item">
+            Random
+          </a>
+        </div>
         <h2 className="ui header secondary-header">Select the Activity</h2>
         <div className="ui segment">
           <form className="ui form" onSubmit={this.handleSubmit}>
