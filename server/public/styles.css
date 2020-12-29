@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.container {
+  margin: 1.3rem;
+}
+
+.secondary-header {
+  text-align: center;
+}

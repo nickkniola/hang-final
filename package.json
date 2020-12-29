@@ -33,15 +33,18 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.1",
     "pg": "^8.5.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "semantic-ui-react": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-react-jsx": "^7.12.11",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "dotenv-webpack": "^6.0.0",
     "eslint": "^7.16.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-html": "^6.1.1",
