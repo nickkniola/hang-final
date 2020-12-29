@@ -15,9 +15,19 @@ app.use(staticMiddleware);
 app.use(express.json());
 
 app.post('/api/activities', (req, res, next) => {
+  let preferredActivity = req.body.preferredActivity;
+  let activityType = req.body.activityType;
+  const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
   const city = req.body.city.replaceAll(' ', '+');
   const state = req.body.state.replaceAll(' ', '+');
-  const activityType = req.body.activityType;
+  if (!activityType) {
+    const activityTypes = ['Food', 'Museum', 'Sports'];
+    const randomIndex = Math.floor(Math.random() * 3);
+    activityType = activityTypes[randomIndex];
+    preferredActivity = activityTypes[randomIndex];
+  } else {
+    preferredActivity = req.body.preferredActivity.replaceAll(' ', '+');
+  }
   const sql = `
     select *
       from "Activities"
@@ -32,22 +42,21 @@ app.post('/api/activities', (req, res, next) => {
   db.query(sql, params)
     .then(result => {
       if (result.rows.length) {
-        res.json(result.rows);
+        res.json({ activityObject: result.rows[0], activityType: activityType });
         return;
       }
-      const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
-      const preferredActivity = req.body.preferredActivity.replaceAll(' ', '+');
       const requestSearchText = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${preferredActivity}+${activityType}+in+${neighborhood}+${city}+${state}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
       return fetch(requestSearchText)
         .then(response => response.json())
         .then(data => {
           const arr = data.results;
-          const location = arr.find(location => location.business_status === 'OPERATIONAL' && location.rating >= 4);
-          if (!location) {
+          const locationsFiltered = arr.filter(location => location.business_status === 'OPERATIONAL' && location.rating >= 4);
+          if (locationsFiltered.length === 0) {
             res.json({});
             return;
           }
-          res.json(location);
+          const location = locationsFiltered[Math.floor(Math.random() * locationsFiltered.length)];
+          res.json({ responseLocation: location, activityType: activityType });
         });
     })
     .catch(err => next(err));
