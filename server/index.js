@@ -36,7 +36,8 @@ app.post('/api/activities', (req, res, next) => {
       where "Activities"."guestId" is NULL
       and "googlePlacesLink" ilike '%' || $1 || '%'
       and "googlePlacesLink" ilike '%' || $2 || '%'
-      and "label" = $3;
+      and "label" = $3
+      order by random();
   `;
   const params = [city, state, activityType];
   db.query(sql, params)
@@ -56,7 +57,9 @@ app.post('/api/activities', (req, res, next) => {
             return;
           }
           const location = locationsFiltered[Math.floor(Math.random() * locationsFiltered.length)];
-          res.json({ responseLocation: location, activityType: activityType });
+          fetch(`https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_PLACES_API_KEY}&placeid=${location.place_id}`)
+            .then(response => response.json())
+            .then(data => res.json({ responseLocation: location, activityType: activityType, mapUrl: data.result.url }));
         });
     })
     .catch(err => next(err));

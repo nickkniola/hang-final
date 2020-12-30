@@ -11,6 +11,7 @@ export default class SelectActivity extends React.Component {
       activityType: '',
       preferredActivity: '',
       responseLocation: '',
+      externalGoogleMapsUrl: '',
       activityObject: '',
       activeView: 'Pairing'
     };
@@ -50,11 +51,13 @@ export default class SelectActivity extends React.Component {
         if (data.activityObject) {
           this.setState({
             activityObject: data.activityObject,
+            externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
             activityType: data.activityType
           });
         } else if (data.responseLocation) {
           this.setState({
             responseLocation: data.responseLocation,
+            externalGoogleMapsUrl: data.mapUrl,
             activityType: data.activityType
           });
         }
@@ -73,12 +76,19 @@ export default class SelectActivity extends React.Component {
     const activityObject = this.state.activityObject;
     const responseLocation = this.state.responseLocation;
     const activityType = this.state.activityType;
-    const date = this.state.date;
+    const externalGoogleMapsUrl = this.state.externalGoogleMapsUrl;
+    let date = this.state.activityObject.date;
     let activityAction = 'Eat at';
     let firstName = this.state.activityObject.firstName;
     let location = this.state.activityObject.location;
     let profileImage = this.state.activityObject.profileImage;
     if (this.state.responseLocation) {
+      date = this.state.date;
+      const year = date.toString().slice(0, 2);
+      const month = date.slice(3, 5);
+      const day = date.slice(8, 10);
+      const activityDate = new Date(`${month} ${day}, ${year} 00:00:00`);
+      date = activityDate.toString().slice(0, 15);
       firstName = 'Another User';
       location = this.state.responseLocation.name;
       profileImage = 'https://semantic-ui.com/images/avatar2/large/molly.png';
@@ -137,7 +147,7 @@ export default class SelectActivity extends React.Component {
                     <div className="content">
                       <div className="header">{activityType} with {firstName}</div>
                       <div className="description">
-                        {activityAction} <a href="#">{location}</a> with <span className="name-text">{firstName}</span> on {date} at 1PM.
+                        {activityAction} <a href={externalGoogleMapsUrl} rel="noreferrer" target="_blank">{location}</a> with <span className="name-text">{firstName}</span> on {date} at 1PM.
                       </div>
                     </div>
                     <div className="extra content">

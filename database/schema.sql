@@ -27,6 +27,7 @@ CREATE TABLE "Activities" (
 	"googlePlacesLink" TEXT NOT NULL,
 	"googleMapsLink" TEXT NOT NULL,
 	"activityTypeId" integer NOT NULL,
+	"externalGoogleMapsUrl" TEXT NOT NULL,
 	"specificActivity" TEXT NOT NULL,
 	"location" TEXT NOT NULL,
 	"date" TEXT NOT NULL,
