@@ -25,7 +25,7 @@ create schema "public";
 CREATE TABLE "Activities" (
 	"activityId" serial NOT NULL,
 	"googlePlacesLink" TEXT NOT NULL,
-	"googleMapsLink" TEXT NOT NULL,
+	"googleMapsLink" TEXT,
 	"activityTypeId" integer NOT NULL,
 	"externalGoogleMapsUrl" TEXT NOT NULL,
 	"specificActivity" TEXT NOT NULL,

@@ -17,6 +17,7 @@ app.use(express.json());
 app.post('/api/activities', (req, res, next) => {
   let preferredActivity = req.body.preferredActivity;
   let activityType = req.body.activityType;
+  const userId = req.body.userId;
   const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
   const city = req.body.city.replaceAll(' ', '+');
   const state = req.body.state.replaceAll(' ', '+');
@@ -33,13 +34,13 @@ app.post('/api/activities', (req, res, next) => {
       from "Activities"
       join "activityTypes" using ("activityTypeId")
       join "Users" using ("hostId")
-      where "Activities"."guestId" is NULL
-      and "googlePlacesLink" ilike '%' || $1 || '%'
+      where "Activities"."guestId" is NULL AND "Activities"."hostId" != $1
       and "googlePlacesLink" ilike '%' || $2 || '%'
-      and "label" = $3
+      and "googlePlacesLink" ilike '%' || $3 || '%'
+      and "label" = $4
       order by random();
   `;
-  const params = [city, state, activityType];
+  const params = [userId, city, state, activityType];
   db.query(sql, params)
     .then(result => {
       if (result.rows.length) {
@@ -67,7 +68,6 @@ app.post('/api/activities', (req, res, next) => {
 });
 
 app.post('/api/activity', (req, res, next) => {
-
   const activityType = req.body.activityType;
   let activityTypeId = null;
   if (activityType === 'Food') {
@@ -78,13 +78,26 @@ app.post('/api/activity', (req, res, next) => {
     activityTypeId = 3;
   }
   const sql = `
-    insert into "Activities" ("googlePlacesLink", "activityTypeId", "specificActivity", "location", "date", "time", "hostId", "externalGoogleMapsUrl")
-         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    insert into "Activities" ("googlePlacesLink", "activityTypeId", "specificActivity", "location", "date", "time", "hostId", "externalGoogleMapsUrl", "googleMapsLink")
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9);
   `;
-  const params = [req.body.googlePlacesLink, activityTypeId, req.body.preferredActivity, req.body.responseLocation.name, req.body.date, '1PM', 3, req.body.externalGoogleMapsUrl];
+  const params = [req.body.googlePlacesLink, activityTypeId, req.body.preferredActivity, req.body.responseLocation.name, req.body.date, '1PM', req.body.userId, req.body.externalGoogleMapsUrl, 'https://www.google.com/maps/embed'];
   db.query(sql, params)
-    .then(result => res.json())
-    // finish with response to database
+    .then(result => {
+      res.status(201).json(result.rows);
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/activities/:activityId', (req, res, next) => {
+  const sql = `
+    update "Activities"
+       set "guestId" = $1
+     where "activityId" = $2;
+  `;
+  const params = [req.body.userId, req.body.activityObject.activityId];
+  db.query(sql, params)
+    .then(result => res.status(201).json(res.rows))
     .catch(err => next(err));
 });
 

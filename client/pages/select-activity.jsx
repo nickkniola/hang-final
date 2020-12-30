@@ -13,7 +13,8 @@ export default class SelectActivity extends React.Component {
       responseLocation: '',
       externalGoogleMapsUrl: '',
       activityObject: '',
-      activeView: 'Pairing'
+      activeView: 'Pairing',
+      userId: 1
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -84,13 +85,13 @@ export default class SelectActivity extends React.Component {
         body: JSON.stringify(formData)
       });
     } else if (this.state.activityObject) {
-      // fetch('/api/activities/:activityId', {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // })
+      fetch(`/api/activities/${this.state.activityObject.activityId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
     }
   }
 

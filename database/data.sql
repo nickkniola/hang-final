@@ -8,7 +8,7 @@ insert into "availabilityTypes" ("label")
             ('Weekdays Evening');
 
 insert into "Users" ("firstName", "lastName", "email", "password", "profileImage", "bio", "interests")
-     values ('Helen', 'Biren', 'helenbiren@aol.com', 'hash789', 'server/public/images/user1.png', 'Born in Redhook, Brooklyn, in the year of who knows when. Opened up her eyes to the tune of an accordion.', 'skiing, running, healthy food, hiking, movies, music'),
+     values ('Guest', 'User', 'helenbiren@aol.com', 'hash789', 'server/public/images/user1.png', 'Born in Redhook, Brooklyn, in the year of who knows when. Opened up her eyes to the tune of an accordion.', 'skiing, running, healthy food, hiking, movies, music'),
             ('Kristy', 'San', 'ksan@mac.com', 'dsa432', 'server/public/images/kristy.png', 'I enjoy food and going to different restaurants.', 'food, Italian food, cuisine, hiking');
 
 insert into "activityTypes" ("label")
@@ -21,5 +21,5 @@ insert into "Messages" ("messageContent")
             ('Good and you?'),
             ('Fine.');
 
-insert into "Activities" ("googlePlacesLink", "googleMapsLink", "specificActivity", "location", "date", "time")
-     values ('https://maps.googleapis.com/maps/api/place/textsearch/json?query=salad+restaurants+in+koreatown+los+angles+California&key=${process.env.GOOGLE_PLACES_API_KEY}', 'https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_PLACES_API_KEY}', 'restaurant', 'sweetgreen', '01/01/2021', '1PM');
+insert into "Activities" ("googlePlacesLink", "googleMapsLink", "activityTypeId", "specificActivity", "location", "date", "time", "hostId", "externalGoogleMapsUrl")
+     values ('https://maps.googleapis.com/maps/api/place/textsearch/json?query=salad+restaurants+in+koreatown+los+angles+California&key=${process.env.GOOGLE_PLACES_API_KEY}', 'https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_PLACES_API_KEY}', 2, 'restaurant', 'sweetgreen', '2021-03-02', '1PM', 2, 'https://www.google.com/maps/embed');
