@@ -18,6 +18,7 @@ export default class SelectActivity extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleAccept = this.handleAccept.bind(this);
   }
 
   handleChange(event) {
@@ -58,7 +59,8 @@ export default class SelectActivity extends React.Component {
           this.setState({
             responseLocation: data.responseLocation,
             externalGoogleMapsUrl: data.mapUrl,
-            activityType: data.activityType
+            activityType: data.activityType,
+            googlePlacesLink: data.googlePlacesLink
           });
         }
       })
@@ -69,6 +71,27 @@ export default class SelectActivity extends React.Component {
         }
       })
       .catch(() => console.error('An unexpected error occurred'));
+  }
+
+  handleAccept() {
+    const formData = this.state;
+    if (this.state.responseLocation) {
+      fetch('/api/activity', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+    } else if (this.state.activityObject) {
+      // fetch('/api/activities/:activityId', {
+      //   method: 'PUT',
+      //   headers: {
+      //     'Content-type': 'application/json'
+      //   },
+      //   body: JSON.stringify(formData)
+      // })
+    }
   }
 
   render() {
@@ -152,7 +175,7 @@ export default class SelectActivity extends React.Component {
                     </div>
                     <div className="extra content">
                       <div className='ui two buttons'>
-                        <button className="ui primary button" type="button">
+                        <button className="ui primary button" type="button" onClick={this.handleAccept}>
                         Accept
                         </button>
                         <button className="ui red button" type="button" onClick={this.handleSubmit}>

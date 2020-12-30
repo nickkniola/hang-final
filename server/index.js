@@ -57,11 +57,34 @@ app.post('/api/activities', (req, res, next) => {
             return;
           }
           const location = locationsFiltered[Math.floor(Math.random() * locationsFiltered.length)];
+          const googlePlacesLink = requestSearchText.split('&key=')[0];
           fetch(`https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_PLACES_API_KEY}&placeid=${location.place_id}`)
             .then(response => response.json())
-            .then(data => res.json({ responseLocation: location, activityType: activityType, mapUrl: data.result.url }));
+            .then(data => res.json({ responseLocation: location, activityType: activityType, mapUrl: data.result.url, googlePlacesLink: googlePlacesLink }));
         });
     })
+    .catch(err => next(err));
+});
+
+app.post('/api/activity', (req, res, next) => {
+
+  const activityType = req.body.activityType;
+  let activityTypeId = null;
+  if (activityType === 'Food') {
+    activityTypeId = 1;
+  } else if (activityType === 'Sports') {
+    activityTypeId = 2;
+  } else if (activityType === 'Museum') {
+    activityTypeId = 3;
+  }
+  const sql = `
+    insert into "Activities" ("googlePlacesLink", "activityTypeId", "specificActivity", "location", "date", "time", "hostId", "externalGoogleMapsUrl")
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+  `;
+  const params = [req.body.googlePlacesLink, activityTypeId, req.body.preferredActivity, req.body.responseLocation.name, req.body.date, '1PM', 3, req.body.externalGoogleMapsUrl];
+  db.query(sql, params)
+    .then(result => res.json())
+    // finish with response to database
     .catch(err => next(err));
 });
 
