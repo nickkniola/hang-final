@@ -1,12 +1,13 @@
 import React from 'react';
 import Menu from './pages/menu';
-import SelectActivity from './pages/select-activity';
+// import SelectActivity from './pages/select-activity';
+import SelectActivity from './pages/SelectActivity';
+
 import Matches from './pages/matches';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -61,7 +62,7 @@ class App extends React.Component {
       .then(data => {
         this.setState({
           isLoading: false
-        })
+        });
         if (data.activityObject) {
           this.setState({
             activityObject: data.activityObject,
@@ -80,7 +81,7 @@ class App extends React.Component {
         }
       })
       .then(() => {
-         if (!this.state.responseLocation && !this.state.activityObject) {
+        if (!this.state.responseLocation && !this.state.activityObject) {
           // eslint-disable-next-line no-console
           this.setState({
             city: '',
@@ -96,8 +97,7 @@ class App extends React.Component {
             acceptedActivityObject: '',
             activityFound: false,
             isLoading: null
-          })
-
+          });
         }
       })
       .catch(() => console.error('An unexpected error occurred'));
@@ -135,8 +135,9 @@ class App extends React.Component {
       <div className="container">
       <Menu handleMenuClick={this.handleMenuClick} />
       <Switch location={this.props.location}>
-          <Route exact path='/pairing' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} />
-          <Route exact path='/random' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} />
+          {/* <Route exact path='/pairing' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} />
+          <Route exact path='/random' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} /> */}
+          <Route exact path='/pairing/select' render={props => <SelectActivity/> }></Route>
           <Route exact path='/matches' component={Matches} />
           <Redirect to='/pairing' />
       </Switch>
