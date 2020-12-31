@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 export default class Menu extends React.Component {
-
   render() {
     return (
       <div className="ui menu">
@@ -10,10 +9,13 @@ export default class Menu extends React.Component {
           <img src="/images/hang_logo.png"></img>
         </a>
         <NavLink className="item" to="/pairing" onClick={this.props.handleMenuClick}>
-        Pairing
+          Pairing
         </NavLink>
         <NavLink className="item" to="/random" onClick={this.props.handleMenuClick}>
-        Random
+          Random
+        </NavLink>
+        <NavLink className="item" to="/matches">
+          Matches
         </NavLink>
       </div>
     );

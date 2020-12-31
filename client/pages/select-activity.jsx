@@ -1,112 +1,15 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 export default class SelectActivity extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     city: '',
-  //     neighborhood: '',
-  //     state: '',
-  //     date: '',
-  //     activityType: '',
-  //     preferredActivity: '',
-  //     responseLocation: '',
-  //     externalGoogleMapsUrl: '',
-  //     activityObject: '',
-  //     activeView: 'Pairing',
-  //     userId: 1
-  //   };
-  //   this.handleChange = this.handleChange.bind(this);
-  //   // this.handleMenuClick = this.handleMenuClick.bind(this);
-  //   this.handleSubmit = this.handleSubmit.bind(this);
-  //   this.handleAccept = this.handleAccept.bind(this);
-  // }
-
-  // handleChange(event) {
-  //   this.setState({
-  //     [event.target.name]: event.target.value
-  //   });
-  // }
-
-  // // handleMenuClick(event) {
-  // //   this.setState({
-  // //     activeView: event.target.textContent
-  // //   });
-  // // }
-
-  // handleSubmit(event) {
-  //   event.preventDefault();
-  //   this.setState({
-  //     activeView: 'acceptReject'
-  //   });
-  //   // GET request to backend server checking if a matching activity exists
-  //   const formData = this.state;
-  //   fetch('/api/activities', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-type': 'application/json'
-  //     },
-  //     body: JSON.stringify(formData)
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       if (data.activityObject) {
-  //         this.setState({
-  //           activityObject: data.activityObject,
-  //           externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
-  //           activityType: data.activityType
-  //         });
-  //       } else if (data.responseLocation) {
-  //         this.setState({
-  //           responseLocation: data.responseLocation,
-  //           externalGoogleMapsUrl: data.mapUrl,
-  //           activityType: data.activityType,
-  //           googlePlacesLink: data.googlePlacesLink
-  //         });
-  //       }
-  //     })
-  //     .then(() => {
-  //       if (!this.state.responseLocation && !this.state.activityObject) {
-  //         // eslint-disable-next-line no-console
-  //         console.log('No matching activity found. Please try again.');
-  //       }
-  //     })
-  //     .catch(() => console.error('An unexpected error occurred'));
-  // }
-
-  // handleAccept() {
-  //   const formData = this.state;
-  //   if (this.state.responseLocation) {
-  //     fetch('/api/activity', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-type': 'application/json'
-  //       },
-  //       body: JSON.stringify(formData)
-  //     })
-  //       .then(response => response.json())
-  //       .then(data => console.log('POST RESPONSE:', data))
-  //       .catch(() => console.error('An unexpected error occurred'));
-  //   } else if (this.state.activityObject) {
-  //     fetch(`/api/activities/${this.state.activityObject.activityId}`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-type': 'application/json'
-  //       },
-  //       body: JSON.stringify(formData)
-  //     })
-  //       .then(response => response.json())
-  //       .then(data => console.log('PUT RESPONSE:', data))
-  //       .catch(() => console.error('An unexpected error occurred'));
-  //   }
-  // }
-
   render() {
     const activeView = this.props.activeView;
     const activityObject = this.props.activityObject;
     const responseLocation = this.props.responseLocation;
     const activityType = this.props.activityType;
     const externalGoogleMapsUrl = this.props.externalGoogleMapsUrl;
+    const activityFound = this.props.activityFound;
+    const isLoading = this.props.isLoading;
     let date = this.props.activityObject.date;
     let activityAction = 'Eat at';
     let firstName = this.props.activityObject.firstName;
@@ -132,10 +35,19 @@ export default class SelectActivity extends React.Component {
     } else if (this.props.activityType === 'Museum') {
       activityAction = 'Visit';
     }
+    if (this.props.activeView === 'Matches') {
+      return <Redirect to='/matches'/>;
+    }
     return (
       <>
-
-        { activeView === 'acceptReject'
+        { activityFound === false
+          ? <>
+              <div className="ui red header secondary-header ">No Activity Found. Please Try Again.</div>
+              <div className="ui divider"></div>
+            </>
+          : <> </>
+        }
+        { activityObject || responseLocation || isLoading
           ? <>
               <div className="ui card centered">
               { !activityObject && !responseLocation
@@ -185,57 +97,56 @@ export default class SelectActivity extends React.Component {
               </div>
             </>
           : <div>
-            <h2 className="ui header secondary-header">
-              {activeView === 'Pairing' ? 'Select Activity' : 'Random Activity'}
-            </h2>
-            <div className="ui segment">
-              <form className="ui form" onSubmit={this.props.handleSubmit}>
-                <div className="two fields">
-                  <div className="field">
-                    <label htmlFor="city" >City</label>
-                    <input type="text" name="city" id="city" placeholder="ex. Chicago" value={this.props.city} onChange={this.props.handleChange} />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="neighborhood" >Neighborhood</label>
-                    <input type="text" name="neighborhood" id="neighborhood" placeholder="ex. Uptown" value={this.props.neighborhood} onChange={this.props.handleChange} />
-                  </div>
-                </div>
-                <div className="field">
-                  <label htmlFor="state">State</label>
-                  <input type="text" name="state" id="state" placeholder="ex. Illinois" value={this.props.state} onChange={this.props.handleChange} />
-                </div>
-                <div className="field">
-                  <label htmlFor="date">Date</label>
-                  <input type="date" name="date" id="date" placeholder="yyyy-mm-dd"
-                    value={this.props.date} onChange={this.props.handleChange}
-                    min="2021-01-01" max="2030-01-01" />
-                </div>
-
-                { activeView === 'Pairing' &&
-                  <>
+              <h2 className="ui header secondary-header">
+                {activeView === 'Pairing' ? 'Select Activity' : 'Random Activity'}
+              </h2>
+              <div className="ui segment">
+                <form className="ui form" onSubmit={this.props.handleSubmit}>
+                  <div className="two fields">
                     <div className="field">
-                      <label htmlFor="activityType">Activity Type</label>
-                      <select type="menu" name="activityType" id="activityType" value={this.props.activityType} onChange={this.props.handleChange} required >
-                        <option value="">Select Activity...</option>
-                        <option name="food" value="Food">Food</option>
-                        <option name="museum" value="Museum">Museum</option>
-                        <option name="sports" value="Sports">Sports</option>
-                      </select>
+                      <label htmlFor="city" >City</label>
+                      <input type="text" name="city" id="city" placeholder="ex. Chicago" value={this.props.city} onChange={this.props.handleChange} />
                     </div>
                     <div className="field">
-                      <label htmlFor="preferredActivity" >Preferred Activity</label>
-                      <input type="text" name="preferredActivity" id="preferredActivity" placeholder="ex. Tennis" value={this.props.preferredActivity} onChange={this.props.handleChange} />
+                      <label htmlFor="neighborhood" >Neighborhood</label>
+                      <input type="text" name="neighborhood" id="neighborhood" placeholder="ex. Uptown" value={this.props.neighborhood} onChange={this.props.handleChange} />
                     </div>
-                  </>
-                }
-
-                <button className="ui primary button" type='submit'>
-                  {activeView === 'Pairing' ? 'Submit' : 'Randomize'}
-                </button>
-              </form>
+                  </div>
+                  <div className="field">
+                    <label htmlFor="state">State</label>
+                    <input type="text" name="state" id="state" placeholder="ex. Illinois" value={this.props.state} onChange={this.props.handleChange} />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="date">Date</label>
+                    <input type="date" name="date" id="date" placeholder="yyyy-mm-dd"
+                      value={this.props.date} onChange={this.props.handleChange}
+                      min="2021-01-01" max="2030-01-01" />
+                  </div>
+                  { activeView === 'Pairing' &&
+                    <>
+                      <div className="field">
+                        <label htmlFor="activityType">Activity Type</label>
+                        <select type="menu" name="activityType" id="activityType" value={this.props.activityType} onChange={this.props.handleChange} required >
+                          <option value="">Select Activity...</option>
+                          <option name="food" value="Food">Food</option>
+                          <option name="museum" value="Museum">Museum</option>
+                          <option name="sports" value="Sports">Sports</option>
+                        </select>
+                      </div>
+                      <div className="field">
+                        <label htmlFor="preferredActivity" >Preferred Activity</label>
+                        <input type="text" name="preferredActivity" id="preferredActivity" placeholder="ex. Tennis" value={this.props.preferredActivity} onChange={this.props.handleChange} />
+                      </div>
+                    </>
+                  }
+                  <button className="ui primary button" type='submit'>
+                    {activeView === 'Pairing' ? 'Submit' : 'Randomize'}
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
         }
+
       </>
     );
   }
