@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class SelectActivity extends React.Component {
+export default class SelectRandom extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

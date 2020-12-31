@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class SelectActivity extends React.Component {
+export default class ConfirmPairing extends React.Component {
   constructor(props) {
     super(props);
     this.handleAccept = this.handleAccept.bind(this);
