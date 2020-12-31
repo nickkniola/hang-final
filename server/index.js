@@ -79,7 +79,8 @@ app.post('/api/activity', (req, res, next) => {
   }
   const sql = `
     insert into "Activities" ("googlePlacesLink", "activityTypeId", "specificActivity", "location", "date", "time", "hostId", "externalGoogleMapsUrl", "googleMapsLink")
-         values ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         returning *;
   `;
   const params = [req.body.googlePlacesLink, activityTypeId, req.body.preferredActivity, req.body.responseLocation.name, req.body.date, '1PM', req.body.userId, req.body.externalGoogleMapsUrl, 'https://www.google.com/maps/embed'];
   db.query(sql, params)
@@ -93,7 +94,8 @@ app.put('/api/activities/:activityId', (req, res, next) => {
   const sql = `
     update "Activities"
        set "guestId" = $1
-     where "activityId" = $2;
+     where "activityId" = $2
+ returning *;
   `;
   const params = [req.body.userId, req.body.activityObject.activityId];
   db.query(sql, params)
