@@ -3,6 +3,7 @@ import Menu from './pages/menu';
 // import SelectActivity from './pages/select-activity';
 import SelectActivity from './pages/SelectActivity';
 import SelectRandom from './pages/SelectRandom';
+import ConfirmPairing from './pages/ConfirmPairing';
 import Matches from './pages/matches';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
@@ -137,12 +138,12 @@ class App extends React.Component {
       <Switch location={this.props.location}>
           {/* <Route exact path='/pairing' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} />
           <Route exact path='/random' render={props => <SelectActivity handleChange={this.handleChange} handleSubmit={this.handleSubmit} handleAccept={this.handleAccept} city={this.state.city} neighborhood={this.state.neighborhood} state={this.state.state} date={this.state.date} activityType={this.state.activityType} preferredActivity={this.state.preferredActivity} responseLocation={this.state.responseLocation} externalGoogleMapsUrl={this.state.externalGoogleMapsUrl} activityObject={this.state.activityObject} activeView={this.state.activeView} userId={this.state.userId} activityFound={this.state.activityFound} isLoading={this.state.isLoading} />} /> */}
-          <Route exact path='/pairing/select' render={props => <SelectActivity />} />
-          <Route exact path='/pairing/confirm' />
-          <Route exact path='/random/select' render={props => <SelectRandom />} />
+          <Route exact path='/pairing/select' component={SelectActivity} />
+          <Route exact path='/pairing/confirm' component={ConfirmPairing} />
+          <Route exact path='/random/select' component={SelectRandom} />
           <Route exact path='/random/confirm' />
           <Route exact path='/matches' component={Matches} />
-          <Redirect to='/pairing' />
+          <Redirect to='/pairing/select' />
       </Switch>
       </div>
     );
