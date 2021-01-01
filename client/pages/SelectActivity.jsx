@@ -110,7 +110,6 @@ export default class SelectActivity extends React.Component {
     if (error) {
       this.setState(formData);
     }
-
   }
 
   render() {

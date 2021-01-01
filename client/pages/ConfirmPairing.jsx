@@ -29,7 +29,43 @@ export default class ConfirmPairing extends React.Component {
       body: JSON.stringify(formData)
     })
       .then(response => response.json())
-      .then(data => this.setState({ result: data, isLoading: false }));
+      .then(data => {
+        if (data.activityObject) {
+          this.setState({
+            isLoading: false,
+            activityObject: data.activityObject,
+            externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
+            activityType: data.activityType,
+            activityFound: true,
+            city: formData.city,
+            neighborhood: formData.neighborhood,
+            state: formData.state,
+            date: formData.date,
+            preferredActivity: formData.preferredActivity,
+            userId: formData.userId
+          });
+        } else if (data.responseLocation) {
+          this.setState({
+            isLoading: false,
+            responseLocation: data.responseLocation,
+            externalGoogleMapsUrl: data.mapUrl,
+            activityType: data.activityType,
+            googlePlacesLink: data.googlePlacesLink,
+            activityFound: true,
+            city: formData.city,
+            neighborhood: formData.neighborhood,
+            state: formData.state,
+            date: formData.date,
+            preferredActivity: formData.preferredActivity,
+            userId: formData.userId
+          });
+        } else {
+          this.setState({
+            isLoading: false,
+            activityFound: false
+          });
+        }
+      });
   }
 
   handleAccept() {
@@ -43,7 +79,7 @@ export default class ConfirmPairing extends React.Component {
         body: JSON.stringify(formData)
       })
         .then(response => response.json())
-        .then(data => this.setState({ acceptedActivityObject: data, activeView: 'Matches' }))
+        .then(data => this.setState({ result: data }))
         .catch(() => console.error('An unexpected error occurred'));
     } else if (this.state.activityObject) {
       fetch(`/api/activities/${this.state.activityObject.activityId}`, {
@@ -54,28 +90,28 @@ export default class ConfirmPairing extends React.Component {
         body: JSON.stringify(formData)
       })
         .then(response => response.json())
-        .then(data => this.setState({ acceptedActivityObject: data, activeView: 'Matches' }))
+        .then(data => this.setState({ result: data }))
         .catch(() => console.error('An unexpected error occurred'));
     }
   }
 
   getName() {
     let name = 'Another User';
-    if (this.state.result.activityObject) {
-      name = this.state.result.activityObject.firstName;
+    if (this.state.activityObject) {
+      name = this.state.activityObject.firstName;
     }
     return name;
   }
 
   getActivityAction() {
     let activityAction = 'Eat at';
-    if (this.state.result.activityType === 'Sports') {
-      if (this.state.result.preferredActivity) {
-        activityAction = `Play ${this.state.result.preferredActivity} at`;
+    if (this.state.activityType === 'Sports') {
+      if (this.state.preferredActivity) {
+        activityAction = `Play ${this.state.preferredActivity} at`;
       } else {
         activityAction = 'Play at';
       }
-    } else if (this.state.result.activityType === 'Museum') {
+    } else if (this.state.activityType === 'Museum') {
       activityAction = 'Visit';
     }
     return activityAction;
@@ -83,28 +119,28 @@ export default class ConfirmPairing extends React.Component {
 
   getLocation() {
     let location = '';
-    if (this.state.result.activityObject) {
-      location = this.state.result.activityObject.location;
-    } else if (this.state.result.responseLocation) {
-      location = this.state.result.responseLocation.name;
+    if (this.state.activityObject) {
+      location = this.state.activityObject.location;
+    } else if (this.state.responseLocation) {
+      location = this.state.responseLocation.name;
     }
     return location;
   }
 
   getExternalGoogleMapsUrl() {
     let url = '/';
-    if (this.state.result.activityObject) {
-      url = this.state.result.activityObject.externalGoogleMapsUrl;
-    } else if (this.state.result.responseLocation) {
-      // url = this.state.result.mapUrl;
+    if (this.state.activityObject) {
+      url = this.state.activityObject.externalGoogleMapsUrl;
+    } else if (this.state.responseLocation) {
+      // url = this.state.mapUrl;
       url = 'test';
     }
     return url;
   }
 
   getDate() {
-    // let date = this.state.result.activityObject.date;
-    // if (this.state.result.responseLocation) {
+    // let date = this.state.activityObject.date;
+    // if (this.state.responseLocation) {
     //   date = this.state.date;
     //   const year = date.toString().slice(0, 2);
     //   const month = date.slice(3, 5);
@@ -122,10 +158,10 @@ export default class ConfirmPairing extends React.Component {
     if (this.state.isLoading === true) {
       return 'loading';
     }
-    if (!this.state.result.activityObject && !this.state.result.responseLocation) {
+    if (!this.state.activityObject && !this.state.responseLocation && this.state.isLoading === false) {
       return <Redirect to={ '/pairing/select' + this.props.location.search + '&error=true'} />;
     }
-    const activity = this.state.result.activityType;
+    const activity = this.state.activityType;
     const name = this.getName();
     const activityAction = this.getActivityAction();
     const locationName = this.getLocation();
