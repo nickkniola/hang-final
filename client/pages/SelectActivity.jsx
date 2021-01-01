@@ -17,7 +17,7 @@ export default class SelectActivity extends React.Component {
       userId: 2,
       acceptedActivityObject: '',
       activityFound: true,
-      isLoading: null
+      isLoading: true
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -100,7 +100,6 @@ export default class SelectActivity extends React.Component {
   componentDidMount() {
     const params = new URLSearchParams(this.props.location.search);
     const error = params.get('error');
-    console.log(error);
     const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
     const formData = { error: error };
     for (let i = 0; i < fields.length; i++) {
@@ -130,7 +129,7 @@ export default class SelectActivity extends React.Component {
               </div>
               <div className="field">
                 <label htmlFor="neighborhood" >Neighborhood</label>
-                <input type="text" name="neighborhood" id="neighborhood" placeholder="ex. Uptown" value={this.state.neighborhood} onChange={this.handleChange} />
+                <input type="text" name="neighborhood" id="neighborhood" placeholder="ex. Uptown" value={this.state.neighborhood} onChange={this.handleChange} required />
               </div>
             </div>
             <div className="field">

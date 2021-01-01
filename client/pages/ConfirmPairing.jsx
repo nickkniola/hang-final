@@ -11,6 +11,27 @@ export default class ConfirmPairing extends React.Component {
     this.handleAccept = this.handleAccept.bind(this);
   }
 
+  componentDidMount() {
+    const search = this.props.location.search;
+    const params = new URLSearchParams(search);
+    const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
+    const formData = { userId: 2 };
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      const value = params.get(field);
+      formData[field] = value;
+    }
+    fetch('/api/activities', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+      .then(response => response.json())
+      .then(data => this.setState({ result: data, isLoading: false }));
+  }
+
   handleAccept() {
     const formData = this.state;
     if (this.state.responseLocation) {
@@ -38,33 +59,63 @@ export default class ConfirmPairing extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const search = this.props.location.search;
-    const params = new URLSearchParams(search);
-    const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
-    const formData = { userId: 2 };
-    for (let i = 0; i < fields.length; i++) {
-      const field = fields[i];
-      const value = params.get(field);
-      formData[field] = value;
-    }
-    fetch('/api/activities', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(response => response.json())
-      .then(data => this.setState({ result: data, isLoading: false }));
-  }
-
   getName() {
     let name = 'Another User';
     if (this.state.result.activityObject) {
       name = this.state.result.activityObject.firstName;
     }
     return name;
+  }
+
+  getActivityAction() {
+    let activityAction = 'Eat at';
+    if (this.state.result.activityType === 'Sports') {
+      if (this.state.result.preferredActivity) {
+        activityAction = `Play ${this.state.result.preferredActivity} at`;
+      } else {
+        activityAction = 'Play at';
+      }
+    } else if (this.state.result.activityType === 'Museum') {
+      activityAction = 'Visit';
+    }
+    return activityAction;
+  }
+
+  getLocation() {
+    let location = '';
+    if (this.state.result.activityObject) {
+      location = this.state.result.activityObject.location;
+    } else if (this.state.result.responseLocation) {
+      location = this.state.result.responseLocation.name;
+    }
+    return location;
+  }
+
+  getExternalGoogleMapsUrl() {
+    let url = '/';
+    if (this.state.result.activityObject) {
+      url = this.state.result.activityObject.externalGoogleMapsUrl;
+    } else if (this.state.result.responseLocation) {
+      // url = this.state.result.mapUrl;
+      url = 'test';
+    }
+    return url;
+  }
+
+  getDate() {
+    // let date = this.state.result.activityObject.date;
+    // if (this.state.result.responseLocation) {
+    //   date = this.state.date;
+    //   const year = date.toString().slice(0, 2);
+    //   const month = date.slice(3, 5);
+    //   const day = date.slice(8, 10);
+    //   const activityDate = new Date(`${month} ${day}, ${year} 00:00:00`);
+    //   date = activityDate.toString().slice(0, 15);
+    //   firstName = 'Another User';
+    //   location = this.props.responseLocation.name;
+    //   profileImage = 'https://semantic-ui.com/images/avatar2/large/molly.png';
+    // }
+    return '01/01/2021';
   }
 
   render() {
@@ -76,6 +127,10 @@ export default class ConfirmPairing extends React.Component {
     }
     const activity = this.state.result.activityType;
     const name = this.getName();
+    const activityAction = this.getActivityAction();
+    const locationName = this.getLocation();
+    const externalGoogleMapsUrl = this.getExternalGoogleMapsUrl();
+    const date = this.getDate();
     return (
       <>
         <div className="ui card centered">
@@ -85,7 +140,7 @@ export default class ConfirmPairing extends React.Component {
           <div className="content">
             <div className="header">{activity} with {name}</div>
             <div className="description">
-              Play basketball at Sports Center with {name} on Jul 10/3/2021 at 1PM.
+              {activityAction} <a href={externalGoogleMapsUrl} rel="noreferrer" target="_blank">{locationName}</a> with <span className="name-text">{name}</span> on {date} at 1PM.
             </div>
           </div>
           <div className="extra content">
