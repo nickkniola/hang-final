@@ -49,7 +49,8 @@ export default class ConfirmPairing extends React.Component {
             isLoading: false,
             activityObject: data.activityObject,
             externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
-            activityFound: true
+            activityFound: true,
+            activityType: data.activityType
           });
         } else if (data.responseLocation) {
           this.setState({
@@ -57,7 +58,8 @@ export default class ConfirmPairing extends React.Component {
             responseLocation: data.responseLocation,
             externalGoogleMapsUrl: data.mapUrl,
             googlePlacesLink: data.googlePlacesLink,
-            activityFound: true
+            activityFound: true,
+            activityType: data.activityType
           });
         } else {
           this.setState({
@@ -183,7 +185,9 @@ export default class ConfirmPairing extends React.Component {
         </div>
       );
     }
-    if (!this.state.activityObject && !this.state.responseLocation && this.state.isLoading === false) {
+    if (!this.state.activityObject && !this.state.responseLocation && this.state.isLoading === false && !this.state.activityType) {
+      return <Redirect to={ '/random/select' + this.props.location.search + '&error=true'} />;
+    } else if (!this.state.activityObject && !this.state.responseLocation && this.state.isLoading === false) {
       return <Redirect to={ '/pairing/select' + this.props.location.search + '&error=true'} />;
     }
     const activity = this.state.activityType;

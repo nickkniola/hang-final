@@ -31,66 +31,41 @@ export default class SelectRandom extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({
-      isLoading: true
-    });
-    // GET request to backend server checking if a matching activity exists
-    const formData = this.state;
-    fetch('/api/activities', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          isLoading: false
-        });
-        if (data.activityObject) {
-          this.setState({
-            activityObject: data.activityObject,
-            externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
-            activityType: data.activityType,
-            activityFound: true
-          });
-        } else if (data.responseLocation) {
-          this.setState({
-            responseLocation: data.responseLocation,
-            externalGoogleMapsUrl: data.mapUrl,
-            activityType: data.activityType,
-            googlePlacesLink: data.googlePlacesLink,
-            activityFound: true
-          });
-        }
-      })
-      .then(() => {
-        if (!this.state.responseLocation && !this.state.activityObject) {
-          // eslint-disable-next-line no-console
-          this.setState({
-            city: '',
-            neighborhood: '',
-            state: '',
-            date: '',
-            activityType: '',
-            preferredActivity: '',
-            responseLocation: '',
-            externalGoogleMapsUrl: '',
-            activityObject: '',
-            userId: 1,
-            acceptedActivityObject: '',
-            activityFound: false,
-            isLoading: null
-          });
-        }
-      })
-      .catch(() => console.error('An unexpected error occurred'));
+    const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
+    const params = new URLSearchParams();
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      const value = this.state[field];
+      params.append(field, value);
+    }
+    const url = '/pairing/confirm?' + params;
+    this.props.history.push(url);
+  }
+
+  componentDidMount() {
+    const params = new URLSearchParams(this.props.location.search);
+    const error = params.get('error');
+    const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
+    const formData = { error: error };
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      const value = params.get(field);
+      formData[field] = value;
+    }
+    if (error) {
+      this.setState(formData);
+    }
   }
 
   render() {
     return (
       <div>
+        { this.state.error &&
+          <>
+            <div className="ui red header secondary-header ">No Activity Found. Please Try Again.</div>
+            <div className="ui divider"></div>
+          </>
+        }
         <h2 className="ui header secondary-header">
           Random Activity
         </h2>
