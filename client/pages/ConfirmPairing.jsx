@@ -44,7 +44,7 @@ export default class ConfirmPairing extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.activityObject) {
+        if (data.activityObject && !data.responseLocation) {
           this.setState({
             isLoading: false,
             activityObject: data.activityObject,

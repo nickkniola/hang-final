@@ -8,10 +8,10 @@ export default class Menu extends React.Component {
         <a className="item">
           <img src="/images/hang_logo.png"></img>
         </a>
-        <NavLink className="item" to="/pairing/select" onClick={this.props.handleMenuClick}>
+        <NavLink className="item" to="/pairing/select" >
           Pairing
         </NavLink>
-        <NavLink className="item" to="/random/select" onClick={this.props.handleMenuClick}>
+        <NavLink className="item" to="/random/select" >
           Random
         </NavLink>
         <NavLink className="item" to="/matches">
