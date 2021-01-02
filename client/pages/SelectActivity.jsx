@@ -40,61 +40,6 @@ export default class SelectActivity extends React.Component {
     }
     const url = '/pairing/confirm?' + params;
     this.props.history.push(url);
-    // this.setState({
-    //   isLoading: true
-    // });
-    // // GET request to backend server checking if a matching activity exists
-    // const formData = this.state;
-    // fetch('/api/activities', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-type': 'application/json'
-    //   },
-    //   body: JSON.stringify(formData)
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     this.setState({
-    //       isLoading: false
-    //     });
-    //     if (data.activityObject) {
-    //       this.setState({
-    //         activityObject: data.activityObject,
-    //         externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
-    //         activityType: data.activityType,
-    //         activityFound: true
-    //       });
-    //     } else if (data.responseLocation) {
-    //       this.setState({
-    //         responseLocation: data.responseLocation,
-    //         externalGoogleMapsUrl: data.mapUrl,
-    //         activityType: data.activityType,
-    //         googlePlacesLink: data.googlePlacesLink,
-    //         activityFound: true
-    //       });
-    //     }
-    //   })
-    //   .then(() => {
-    //     if (!this.state.responseLocation && !this.state.activityObject) {
-    //       // eslint-disable-next-line no-console
-    //       this.setState({
-    //         city: '',
-    //         neighborhood: '',
-    //         state: '',
-    //         date: '',
-    //         activityType: '',
-    //         preferredActivity: '',
-    //         responseLocation: '',
-    //         externalGoogleMapsUrl: '',
-    //         activityObject: '',
-    //         userId: 1,
-    //         acceptedActivityObject: '',
-    //         activityFound: false,
-    //         isLoading: null
-    //       });
-    //     }
-    //   })
-    //   .catch(() => console.error('An unexpected error occurred'));
   }
 
   componentDidMount() {
@@ -115,7 +60,12 @@ export default class SelectActivity extends React.Component {
   render() {
     return (
       <div>
-        { this.state.error && 'No Activity Found.'}
+        { this.state.error &&
+          <>
+            <div className="ui red header secondary-header ">No Activity Found. Please Try Again.</div>
+            <div className="ui divider"></div>
+          </>
+        }
         <h2 className="ui header secondary-header">
           Select Activity
         </h2>
