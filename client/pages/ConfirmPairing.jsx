@@ -9,6 +9,7 @@ export default class ConfirmPairing extends React.Component {
       result: null
     };
     this.handleAccept = this.handleAccept.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -21,6 +22,18 @@ export default class ConfirmPairing extends React.Component {
       const value = params.get(field);
       formData[field] = value;
     }
+    this.setState({
+      city: formData.city,
+      neighborhood: formData.neighborhood,
+      state: formData.state,
+      date: formData.date,
+      preferredActivity: formData.preferredActivity,
+      userId: formData.userId
+    }, () => this.handleSubmit());
+  }
+
+  handleSubmit() {
+    const formData = this.state;
     fetch('/api/activities', {
       method: 'POST',
       headers: {
@@ -36,13 +49,13 @@ export default class ConfirmPairing extends React.Component {
             activityObject: data.activityObject,
             externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
             activityType: data.activityType,
-            activityFound: true,
-            city: formData.city,
-            neighborhood: formData.neighborhood,
-            state: formData.state,
-            date: formData.date,
-            preferredActivity: formData.preferredActivity,
-            userId: formData.userId
+            activityFound: true
+            // city: formData.city,
+            // neighborhood: formData.neighborhood,
+            // state: formData.state,
+            // date: formData.date,
+            // preferredActivity: formData.preferredActivity,
+            // userId: formData.userId
           });
         } else if (data.responseLocation) {
           this.setState({
@@ -51,13 +64,13 @@ export default class ConfirmPairing extends React.Component {
             externalGoogleMapsUrl: data.mapUrl,
             activityType: data.activityType,
             googlePlacesLink: data.googlePlacesLink,
-            activityFound: true,
-            city: formData.city,
-            neighborhood: formData.neighborhood,
-            state: formData.state,
-            date: formData.date,
-            preferredActivity: formData.preferredActivity,
-            userId: formData.userId
+            activityFound: true
+            // city: formData.city,
+            // neighborhood: formData.neighborhood,
+            // state: formData.state,
+            // date: formData.date,
+            // preferredActivity: formData.preferredActivity,
+            // userId: formData.userId
           });
         } else {
           this.setState({
