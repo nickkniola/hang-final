@@ -157,7 +157,31 @@ export default class ConfirmPairing extends React.Component {
 
   render() {
     if (this.state.isLoading === true) {
-      return 'loading';
+      return (
+        <div className="ui card centered">
+          <div className="ui placeholder">
+            <div className="content">
+              <div className="ui placeholder">
+                <div className="square image"></div>
+                <div className="ui active inverted dimmer">
+                  <div className="ui massive text loader">Loading</div>
+                </div>
+                <div className="header">
+                  <div className="line"></div>
+                </div>
+                <div className="paragraph">
+                  <div className="line"></div>
+                  <div className="line"></div>
+                </div>
+                <div className="paragraph">
+                  <div className="line"></div>
+                  <div className="line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     }
     if (!this.state.activityObject && !this.state.responseLocation && this.state.isLoading === false) {
       return <Redirect to={ '/pairing/select' + this.props.location.search + '&error=true'} />;
