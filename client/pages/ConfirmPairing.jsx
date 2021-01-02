@@ -28,7 +28,8 @@ export default class ConfirmPairing extends React.Component {
       state: formData.state,
       date: formData.date,
       preferredActivity: formData.preferredActivity,
-      userId: formData.userId
+      userId: formData.userId,
+      activityType: formData.activityType
     }, () => this.handleSubmit());
   }
 
@@ -48,29 +49,15 @@ export default class ConfirmPairing extends React.Component {
             isLoading: false,
             activityObject: data.activityObject,
             externalGoogleMapsUrl: data.activityObject.externalGoogleMapsUrl,
-            activityType: data.activityType,
             activityFound: true
-            // city: formData.city,
-            // neighborhood: formData.neighborhood,
-            // state: formData.state,
-            // date: formData.date,
-            // preferredActivity: formData.preferredActivity,
-            // userId: formData.userId
           });
         } else if (data.responseLocation) {
           this.setState({
             isLoading: false,
             responseLocation: data.responseLocation,
             externalGoogleMapsUrl: data.mapUrl,
-            activityType: data.activityType,
             googlePlacesLink: data.googlePlacesLink,
             activityFound: true
-            // city: formData.city,
-            // neighborhood: formData.neighborhood,
-            // state: formData.state,
-            // date: formData.date,
-            // preferredActivity: formData.preferredActivity,
-            // userId: formData.userId
           });
         } else {
           this.setState({
@@ -145,26 +132,27 @@ export default class ConfirmPairing extends React.Component {
     if (this.state.activityObject) {
       url = this.state.activityObject.externalGoogleMapsUrl;
     } else if (this.state.responseLocation) {
-      // url = this.state.mapUrl;
-      url = 'test';
+      url = this.state.externalGoogleMapsUrl;
     }
     return url;
   }
 
   getDate() {
-    // let date = this.state.activityObject.date;
-    // if (this.state.responseLocation) {
-    //   date = this.state.date;
-    //   const year = date.toString().slice(0, 2);
-    //   const month = date.slice(3, 5);
-    //   const day = date.slice(8, 10);
-    //   const activityDate = new Date(`${month} ${day}, ${year} 00:00:00`);
-    //   date = activityDate.toString().slice(0, 15);
-    //   firstName = 'Another User';
-    //   location = this.props.responseLocation.name;
-    //   profileImage = 'https://semantic-ui.com/images/avatar2/large/molly.png';
-    // }
-    return '01/01/2021';
+    let date = '';
+    if (this.state.activityObject) {
+      date = this.state.activityObject.date;
+    } else if (this.state.responseLocation) {
+      date = this.state.date;
+    }
+    return date;
+  }
+
+  getProfileImage() {
+    let profileImage = 'https://semantic-ui.com/images/avatar2/large/molly.png';
+    if (this.state.activityObject) {
+      profileImage = this.state.activityObject.profileImage;
+    }
+    return profileImage;
   }
 
   render() {
@@ -180,11 +168,12 @@ export default class ConfirmPairing extends React.Component {
     const locationName = this.getLocation();
     const externalGoogleMapsUrl = this.getExternalGoogleMapsUrl();
     const date = this.getDate();
+    const profileImage = this.getProfileImage();
     return (
       <>
         <div className="ui card centered">
           <div className="image">
-            <img src="/images/kristy.png" />
+            <img src={profileImage} />
           </div>
           <div className="content">
             <div className="header">{activity} with {name}</div>
