@@ -38,7 +38,7 @@ export default class SelectRandom extends React.Component {
       const value = this.state[field];
       params.append(field, value);
     }
-    const url = '/pairing/confirm?' + params;
+    const url = '/random/confirm?' + params;
     this.props.history.push(url);
   }
 
