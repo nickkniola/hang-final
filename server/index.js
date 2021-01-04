@@ -99,12 +99,24 @@ app.put('/api/activities/:activityId', (req, res, next) => {
   `;
   const params = [req.body.userId, req.body.activityObject.activityId];
   db.query(sql, params)
-    .then(result => res.status(201).json(res.rows))
+    .then(result => res.status(201).json(result.rows))
     .catch(err => next(err));
 });
 
 app.get('/api/matches/:userId', (req, res, next) => {
-
+  const userId = parseInt(req.params.userId);
+  const sql = `
+    select *
+      from "Activities"
+      join "activityTypes" using ("activityTypeId")
+      join "Users" using ("hostId")
+     where ("hostId" = $1 or "guestId" = $1)
+       and ("hostId" is not NULL and "guestId" is not NULL)
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => res.status(200).json(result.rows))
+    .catch(err => next(err));
 });
 
 app.use(errorMiddleware);
