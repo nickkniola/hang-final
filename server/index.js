@@ -103,6 +103,10 @@ app.put('/api/activities/:activityId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/matches/:userId', (req, res, next) => {
+
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
