@@ -6,6 +6,7 @@ export default class Matches extends React.Component {
     this.state = {
       userId: 2
     };
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
@@ -15,7 +16,6 @@ export default class Matches extends React.Component {
       const params = new URLSearchParams(search);
       userId = params.get('userId');
     }
-
     fetch('/api/matches/' + userId)
       .then(response => response.json())
       .then(data => {
@@ -27,6 +27,10 @@ export default class Matches extends React.Component {
       .catch(() => console.error('An unexpected error occurred'));
   }
 
+  handleClick() {
+    this.props.history.push('/messages');
+  }
+
   render() {
     return (
       <div className="ui grid celled">
@@ -35,13 +39,13 @@ export default class Matches extends React.Component {
           <div className="ui middle aligned celled list">
             {this.state.matches
               ? this.state.matches.map(match =>
-                  <div className="item" key={match.activityId}>
+                  <div className="item" key={match.userId}>
                     <img className="ui avatar image" src={match.profileImage} />
                     <div className="content">
                       <div className="header">{match.firstName}</div>
                     </div>
                     <div className="right floated content">
-                      <button className="ui icon button basic message-button">
+                      <button onClick={this.handleClick} className="ui icon button basic message-button">
                         <i className="comments alternate icon" />
                       </button>
                     </div>
