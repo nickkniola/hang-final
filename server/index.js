@@ -109,6 +109,7 @@ app.get('/api/matches/:userId', (req, res, next) => {
     select *
       from "Activities"
       join "Users" on "hostId" = "userId" or "guestId" = "userId"
+      join "activityTypes" using ("activityTypeId")
      where ("Activities"."hostId" = $1 or "Activities"."guestId" = $1)
        and ("Activities"."hostId" is not NULL and "Activities"."guestId" is not NULL)
        and ("userId" != $1)
