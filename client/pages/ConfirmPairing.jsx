@@ -82,7 +82,11 @@ export default class ConfirmPairing extends React.Component {
       })
         .then(response => response.json())
         .then(data => this.setState({ result: data }))
-        .then(() => this.props.history.push('/matches'))
+        .then(() => {
+          const params = new URLSearchParams();
+          params.append('userId', this.state.userId);
+          this.props.history.push('/matches?' + params);
+        })
         .catch(() => console.error('An unexpected error occurred'));
     } else if (this.state.activityObject) {
       fetch(`/api/activities/${this.state.activityObject.activityId}`, {
@@ -94,7 +98,11 @@ export default class ConfirmPairing extends React.Component {
       })
         .then(response => response.json())
         .then(data => this.setState({ result: data }))
-        .then(() => this.props.history.push('/matches'))
+        .then(() => {
+          const params = new URLSearchParams();
+          params.append('userId', this.state.userId);
+          this.props.history.push('/matches?' + params);
+        })
         .catch(() => console.error('An unexpected error occurred'));
     }
   }

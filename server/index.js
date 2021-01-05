@@ -33,7 +33,7 @@ app.post('/api/activities', (req, res, next) => {
     select *
       from "Activities"
       join "activityTypes" using ("activityTypeId")
-      join "Users" using ("hostId")
+      join "Users" on "hostId" = "userId"
       where "Activities"."guestId" is NULL AND "Activities"."hostId" != $1
       and "googlePlacesLink" ilike '%' || $2 || '%'
       and "googlePlacesLink" ilike '%' || $3 || '%'
