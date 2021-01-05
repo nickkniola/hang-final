@@ -17,3 +17,12 @@ body {
 .name-text {
   font-style: bold;
 }
+
+.matches-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+button.message-button {
+  padding: 0.5rem !important;
+}

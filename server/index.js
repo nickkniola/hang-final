@@ -33,7 +33,7 @@ app.post('/api/activities', (req, res, next) => {
     select *
       from "Activities"
       join "activityTypes" using ("activityTypeId")
-      join "Users" using ("hostId")
+      join "Users" on "hostId" = "userId"
       where "Activities"."guestId" is NULL AND "Activities"."hostId" != $1
       and "googlePlacesLink" ilike '%' || $2 || '%'
       and "googlePlacesLink" ilike '%' || $3 || '%'
@@ -99,7 +99,35 @@ app.put('/api/activities/:activityId', (req, res, next) => {
   `;
   const params = [req.body.userId, req.body.activityObject.activityId];
   db.query(sql, params)
-    .then(result => res.status(201).json(res.rows))
+    .then(result => res.status(201).json(result.rows))
+    .catch(err => next(err));
+});
+
+app.get('/api/matches/:userId', (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const sql = `
+    select *
+      from "Activities"
+      join "Users" on "hostId" = "userId" or "guestId" = "userId"
+      join "activityTypes" using ("activityTypeId")
+     where ("Activities"."hostId" = $1 or "Activities"."guestId" = $1)
+       and ("Activities"."hostId" is not NULL and "Activities"."guestId" is not NULL)
+       and ("userId" != $1)
+  order by "date"
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => {
+      const arrOfMatches = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        const userId = result.rows[i].userId;
+        const arr = arrOfMatches.filter(match => match.userId === userId);
+        if (!arr[0]) {
+          arrOfMatches.push(result.rows[i]);
+        }
+      }
+      res.status(200).json({ activities: result.rows, matches: arrOfMatches });
+    })
     .catch(err => next(err));
 });
 
