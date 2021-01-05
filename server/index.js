@@ -108,14 +108,25 @@ app.get('/api/matches/:userId', (req, res, next) => {
   const sql = `
     select *
       from "Activities"
-      join "activityTypes" using ("activityTypeId")
-      join "Users" using ("hostId")
-     where ("hostId" = $1 or "guestId" = $1)
-       and ("hostId" is not NULL and "guestId" is not NULL)
+      join "Users" on "hostId" = "userId" or "guestId" = "userId"
+     where ("Activities"."hostId" = $1 or "Activities"."guestId" = $1)
+       and ("Activities"."hostId" is not NULL and "Activities"."guestId" is not NULL)
+       and ("userId" != $1)
+  order by "date"
   `;
   const params = [userId];
   db.query(sql, params)
-    .then(result => res.status(200).json(result.rows))
+    .then(result => {
+      const arrOfMatches = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        const userId = result.rows[i].userId;
+        const arr = arrOfMatches.filter(match => match.userId === userId);
+        if (!arr[0]) {
+          arrOfMatches.push(result.rows[i]);
+        }
+      }
+      res.status(200).json({ activities: result.rows, matches: arrOfMatches });
+    })
     .catch(err => next(err));
 });
 
