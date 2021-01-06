@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  margin: 1.3rem;
+  padding: 0.5rem 0.5rem 0 0.5rem;
 }
 
 .secondary-header {
@@ -25,4 +25,37 @@ body {
 
 button.message-button {
   padding: 0.5rem !important;
+}
+
+h3.message-header {
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0;
+  position: relative;
+  left: calc(50% - 77px);
+}
+
+.message-grid {
+  background-color: rgb(251, 251, 251);
+  height: calc(100vh - 122px);
+}
+
+.message-divider {
+  margin-top: 0.4rem !important;
+}
+
+.blue-message-left {
+  margin-top: 0.3rem;
+  margin-left: 1rem;
+}
+
+.blue-message-right {
+  margin-top: 0.3rem;
+  margin-right: 1rem;
+}
+
+.send-message {
+  position: absolute !important;
+  width: 96%;
+  bottom: 1rem;
 }

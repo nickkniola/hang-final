@@ -45,7 +45,7 @@ export default class Matches extends React.Component {
                       <div className="header">{match.firstName}</div>
                     </div>
                     <div className="right floated content">
-                      <button onClick={this.handleClick} className="ui icon button basic message-button">
+                      <button type="button" onClick={this.handleClick} className="ui icon button basic message-button">
                         <i className="comments alternate icon" />
                       </button>
                     </div>
