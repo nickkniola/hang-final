@@ -55,7 +55,11 @@ h3.message-header {
 }
 
 .send-message {
-  position: absolute !important;
+  position: fixed !important;
   width: 96%;
-  bottom: 1rem;
+  bottom: 0.5rem;
+}
+
+.message-container {
+  max-height: calc(100vh - 187px);
 }
