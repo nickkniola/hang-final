@@ -41,22 +41,12 @@ export default class Messages extends React.Component {
         <div className="ui grid two columns message-container">
           <div className="row blue-message-left">
             <div className="ui compact blue message left floated column" >
-              <p>Get all the best inventions in your e-mail every day. Sign up now!</p>
+              <p></p>
             </div>
           </div>
           <div className="row blue-message-right">
             <div className="ui compact blue message right floated column" >
-              <p>Get all the best inventions in your e-mail every day. Sign up now!</p>
-            </div>
-          </div>
-          <div className="row blue-message-left">
-            <div className="ui compact blue message left column" >
-              <p>Get all the best inventions in your e-mail every day. Sign up now!</p>
-            </div>
-          </div>
-          <div className="row blue-message-right">
-            <div className="ui compact blue message right floated column" >
-              <p>Get all the best inventions in your e-mail every day. Sign up now!</p>
+              <p></p>
             </div>
           </div>
         </div>
