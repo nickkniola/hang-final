@@ -136,7 +136,19 @@ app.get('/api/matches/:userId', (req, res, next) => {
 app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
   const userId = parseInt(req.params.userId);
   const partnerId = parseInt(req.params.partnerId);
-
+  const sql = `
+    select *
+      from "Messages"
+     where ("userId" = $1 or "partnerId" = $1)
+       and ("userId" = $2 or "partnerId" = $2)
+  order by "messageId";
+  `;
+  const params = [userId, partnerId];
+  db.query(sql, params)
+    .then(result => {
+      res.status(200).json(result.rows);
+    })
+    .catch(err => console.error(err));
 });
 
 io.on('connection', socket => {
