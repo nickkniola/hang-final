@@ -86,7 +86,7 @@ export default class Messages extends React.Component {
                   </div>
                 </div>
               : <div className="row blue-message-left" key={message.messageId}>
-                  <div className="ui compact blue message left floated column" >
+                  <div className="ui compact gray message left floated column" >
                     <p>{message.messageContent}</p>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default class Messages extends React.Component {
                   </div>
                 </div>
               : <div className="row blue-message-left" key={index}>
-                  <div className="ui compact blue message left floated column" >
+                  <div className="ui compact gray message left floated column" >
                     <p>{liveMessage.message}</p>
                   </div>
               </div>
@@ -108,7 +108,6 @@ export default class Messages extends React.Component {
           }
           <div className="message-bottom" ref={this.messageBottomRef} />
         </div>
-
         <div className="ui fluid action input send-message ">
           <input type="text" placeholder="" value={this.state.message} onChange={this.handleChange}/>
           <button type="button" className="ui icon button blue" onClick={this.handleSend}>
