@@ -18,6 +18,14 @@ export default class Messages extends React.Component {
     this.params = new URLSearchParams(this.props.location.search);
     this.userId = this.params.get('userId');
     this.partnerId = this.params.get('partnerId');
+    fetch(`/api/messages/${this.userId}/${this.partnerId}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          chat: data
+        });
+      })
+      .catch(() => console.error('An unexpected error occurred'));
   }
 
   componentWillUnmount() {
