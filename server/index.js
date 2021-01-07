@@ -133,6 +133,12 @@ app.get('/api/matches/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const partnerId = parseInt(req.params.partnerId);
+
+});
+
 io.on('connection', socket => {
   socket.on('send-message', data => {
     const sql = `

@@ -5,7 +5,8 @@ export default class Messages extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: ''
+      message: '',
+      chat: []
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -14,6 +15,9 @@ export default class Messages extends React.Component {
 
   componentDidMount() {
     this.socket = io();
+    this.params = new URLSearchParams(this.props.location.search);
+    this.userId = this.params.get('userId');
+    this.partnerId = this.params.get('partnerId');
   }
 
   componentWillUnmount() {
@@ -31,10 +35,7 @@ export default class Messages extends React.Component {
   }
 
   handleSend(event) {
-    const params = new URLSearchParams(this.props.location.search);
-    const userId = params.get('userId');
-    const partnerId = params.get('partnerId');
-    this.socket.emit('send-message', { message: this.state.message, userId: userId, partnerId: partnerId });
+    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId });
   }
 
   render() {
