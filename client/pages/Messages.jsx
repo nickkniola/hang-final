@@ -12,6 +12,14 @@ export default class Messages extends React.Component {
     this.handleSend = this.handleSend.bind(this);
   }
 
+  componentDidMount() {
+    this.socket = io();
+  }
+
+  componentWillUnmount() {
+    this.socket.disconnect();
+  }
+
   handleClick() {
     this.props.history.push('/matches');
   }
@@ -26,8 +34,7 @@ export default class Messages extends React.Component {
     const params = new URLSearchParams(this.props.location.search);
     const userId = params.get('userId');
     const partnerId = params.get('partnerId');
-    const socket = io();
-    socket.emit('send-message', { message: this.state.message, userId: userId, partnerId: partnerId });
+    this.socket.emit('send-message', { message: this.state.message, userId: userId, partnerId: partnerId });
   }
 
   render() {
