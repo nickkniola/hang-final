@@ -51,7 +51,7 @@ h3.message-header {
 
 .blue-message-right {
   margin-top: 0.3rem;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 }
 
 .send-message {
@@ -61,7 +61,11 @@ h3.message-header {
 }
 
 .message-container {
-  max-height: calc(100vh - 187px);
+  max-height: calc(100vh - 167px);
   width: 100vw;
   overflow-y: scroll;
+}
+
+.message-bottom {
+  height: 1rem;
 }

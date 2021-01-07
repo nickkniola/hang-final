@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 export default class Messages extends React.Component {
   constructor(props) {
     super(props);
+    this.messageBottomRef = React.createRef();
     this.state = {
       message: '',
       chat: [],
@@ -12,6 +13,7 @@ export default class Messages extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSend = this.handleSend.bind(this);
+    this.scrollMessages = this.scrollMessages.bind(this);
   }
 
   componentDidMount() {
@@ -27,7 +29,6 @@ export default class Messages extends React.Component {
         });
       })
       .catch(() => console.error('An unexpected error occurred'));
-
     this.socket.on('message', data => {
       const liveChat = [...this.state.liveChat];
       liveChat.push(data);
@@ -35,6 +36,10 @@ export default class Messages extends React.Component {
         liveChat: liveChat
       });
     });
+  }
+
+  componentDidUpdate() {
+    this.scrollMessages();
   }
 
   componentWillUnmount() {
@@ -54,6 +59,10 @@ export default class Messages extends React.Component {
   handleSend(event) {
     this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId });
     this.setState({ message: '' });
+  }
+
+  scrollMessages() {
+    this.messageBottomRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 
   render() {
@@ -97,7 +106,9 @@ export default class Messages extends React.Component {
               </div>
           )
           }
+          <div className="message-bottom" ref={this.messageBottomRef} />
         </div>
+
         <div className="ui fluid action input send-message ">
           <input type="text" placeholder="" value={this.state.message} onChange={this.handleChange}/>
           <button type="button" className="ui icon button blue" onClick={this.handleSend}>
