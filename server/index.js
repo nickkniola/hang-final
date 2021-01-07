@@ -152,7 +152,8 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
 });
 
 io.on('connection', socket => {
-  socket.on('send-message', data => {
+  socket.on('send-message', (data, socketId) => {
+    socket.to(socketId).emit('emit-message', data, socket.id);
     const sql = `
       insert into "Messages" ("messageContent", "userId", "partnerId")
           values ($1, $2, $3)

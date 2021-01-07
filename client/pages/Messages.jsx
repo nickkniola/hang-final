@@ -26,6 +26,14 @@ export default class Messages extends React.Component {
         });
       })
       .catch(() => console.error('An unexpected error occurred'));
+    this.socket.on('emit-message', (data, socketId) => {
+      console.log('data', data);
+      this.socketId = socketId;
+      if (!socketId) {
+        this.socketId = this.socket.id;
+        console.log('socket.id', this.socket.id);
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -43,7 +51,8 @@ export default class Messages extends React.Component {
   }
 
   handleSend(event) {
-    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId });
+    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId }, this.socketId);
+    this.setState({ message: '' });
   }
 
   render() {
