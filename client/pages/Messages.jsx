@@ -47,6 +47,8 @@ export default class Messages extends React.Component {
   }
 
   render() {
+    const messages = this.state.chat;
+    const userId = parseInt(this.userId);
     return (
       <>
         <button className="ui icon button basic message-button" onClick={this.handleClick}>
@@ -55,16 +57,20 @@ export default class Messages extends React.Component {
         <h3 className="secondary-header message-header">Messages</h3>
         <div className="ui divider message-divider"></div>
         <div className="ui grid two columns message-container">
-          <div className="row blue-message-left">
-            <div className="ui compact blue message left floated column" >
-              <p></p>
-            </div>
-          </div>
-          <div className="row blue-message-right">
-            <div className="ui compact blue message right floated column" >
-              <p></p>
-            </div>
-          </div>
+          { messages.map(message =>
+            message.userId === userId
+              ? <div className="row blue-message-right" key={message.messageId}>
+                  <div className="ui compact blue message right floated column" >
+                    <p>{message.messageContent}</p>
+                  </div>
+                </div>
+              : <div className="row blue-message-left" key={message.messageId}>
+                  <div className="ui compact blue message left floated column" >
+                    <p>{message.messageContent}</p>
+                  </div>
+                </div>
+          )
+          }
         </div>
         <div className="ui fluid action input send-message ">
           <input type="text" placeholder="" value={this.state.message} onChange={this.handleChange}/>
