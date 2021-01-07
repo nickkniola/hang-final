@@ -10,6 +10,8 @@ const db = new pg.Pool({
 });
 
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 app.use(staticMiddleware);
 app.use(express.json());
@@ -131,9 +133,26 @@ app.get('/api/matches/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+io.on('connection', socket => {
+  socket.on('send-message', data => {
+    const sql = `
+      insert into "Messages" ("messageContent", "userId", "partnerId")
+          values ($1, $2, $3)
+          returning *;
+    `;
+    const params = [data.message, data.userId, data.partnerId];
+    db.query(sql, params)
+      .then(result => {
+        // eslint-disable-next-line no-console
+        console.log(result.rows);
+      })
+      .catch(err => console.error(err));
+  });
+});
+
 app.use(errorMiddleware);
 
-app.listen(process.env.PORT, () => {
+http.listen(process.env.PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`express server listening on port ${process.env.PORT}`);
 });

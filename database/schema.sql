@@ -64,8 +64,8 @@ CREATE TABLE "activityTypes" (
 CREATE TABLE "Messages" (
 	"messageId" serial NOT NULL,
 	"messageContent" TEXT NOT NULL,
-	"hostId" integer NOT NULL,
-	"guestId" integer,
+	"userId" integer NOT NULL,
+	"partnerId" integer,
 	CONSTRAINT "Messages_pk" PRIMARY KEY ("messageId")
 ) WITH (
   OIDS=FALSE
