@@ -27,8 +27,11 @@ export default class Matches extends React.Component {
       .catch(() => console.error('An unexpected error occurred'));
   }
 
-  handleClick() {
-    this.props.history.push('/messages');
+  handleClick(event) {
+    const params = new URLSearchParams();
+    params.append('userId', this.state.userId);
+    params.append('partnerId', event.target.id);
+    this.props.history.push('/messages?' + params);
   }
 
   render() {
@@ -45,8 +48,8 @@ export default class Matches extends React.Component {
                       <div className="header">{match.firstName}</div>
                     </div>
                     <div className="right floated content">
-                      <button type="button" onClick={this.handleClick} className="ui icon button basic message-button">
-                        <i className="comments alternate icon" />
+                      <button type="button" id={match.userId} onClick={this.handleClick} className="ui icon button basic message-button">
+                          <i className="comments alternate icon" id={match.userId}/>
                       </button>
                     </div>
                   </div>
