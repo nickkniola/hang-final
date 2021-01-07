@@ -4,16 +4,42 @@ import io from 'socket.io-client';
 export default class Messages extends React.Component {
   constructor(props) {
     super(props);
+    this.messageBottomRef = React.createRef();
     this.state = {
-      message: ''
+      message: '',
+      chat: [],
+      liveChat: []
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSend = this.handleSend.bind(this);
+    this.scrollMessages = this.scrollMessages.bind(this);
   }
 
   componentDidMount() {
-    this.socket = io();
+    this.params = new URLSearchParams(this.props.location.search);
+    this.userId = this.params.get('userId');
+    this.partnerId = this.params.get('partnerId');
+    this.socket = io('/', { query: { userId: this.userId, partnerId: this.partnerId } });
+    fetch(`/api/messages/${this.userId}/${this.partnerId}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({
+          chat: data
+        });
+      })
+      .catch(() => console.error('An unexpected error occurred'));
+    this.socket.on('message', data => {
+      const liveChat = [...this.state.liveChat];
+      liveChat.push(data);
+      this.setState({
+        liveChat: liveChat
+      });
+    });
+  }
+
+  componentDidUpdate() {
+    this.scrollMessages();
   }
 
   componentWillUnmount() {
@@ -31,13 +57,19 @@ export default class Messages extends React.Component {
   }
 
   handleSend(event) {
-    const params = new URLSearchParams(this.props.location.search);
-    const userId = params.get('userId');
-    const partnerId = params.get('partnerId');
-    this.socket.emit('send-message', { message: this.state.message, userId: userId, partnerId: partnerId });
+    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId });
+    this.setState({ message: '' });
+  }
+
+  scrollMessages() {
+    this.messageBottomRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 
   render() {
+    const messages = this.state.chat;
+    const userId = parseInt(this.userId);
+    const liveChat = this.state.liveChat;
+
     return (
       <>
         <button className="ui icon button basic message-button" onClick={this.handleClick}>
@@ -46,16 +78,35 @@ export default class Messages extends React.Component {
         <h3 className="secondary-header message-header">Messages</h3>
         <div className="ui divider message-divider"></div>
         <div className="ui grid two columns message-container">
-          <div className="row blue-message-left">
-            <div className="ui compact blue message left floated column" >
-              <p></p>
-            </div>
-          </div>
-          <div className="row blue-message-right">
-            <div className="ui compact blue message right floated column" >
-              <p></p>
-            </div>
-          </div>
+          { messages.map(message =>
+            message.userId === userId
+              ? <div className="row blue-message-right" key={message.messageId}>
+                  <div className="ui compact blue message right floated column" >
+                    <p>{message.messageContent}</p>
+                  </div>
+                </div>
+              : <div className="row blue-message-left" key={message.messageId}>
+                  <div className="ui compact gray message left floated column" >
+                    <p>{message.messageContent}</p>
+                  </div>
+                </div>
+          )
+          }
+          { liveChat.map((liveMessage, index) =>
+            liveMessage.senderUserId === userId
+              ? <div className="row blue-message-right" key={index}>
+                  <div className="ui compact blue message right floated column" >
+                    <p>{liveMessage.message}</p>
+                  </div>
+                </div>
+              : <div className="row blue-message-left" key={index}>
+                  <div className="ui compact gray message left floated column" >
+                    <p>{liveMessage.message}</p>
+                  </div>
+              </div>
+          )
+          }
+          <div className="message-bottom" ref={this.messageBottomRef} />
         </div>
         <div className="ui fluid action input send-message ">
           <input type="text" placeholder="" value={this.state.message} onChange={this.handleChange}/>

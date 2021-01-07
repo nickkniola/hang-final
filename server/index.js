@@ -133,8 +133,36 @@ app.get('/api/matches/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const partnerId = parseInt(req.params.partnerId);
+  const sql = `
+    select *
+      from "Messages"
+     where ("userId" = $1 or "partnerId" = $1)
+       and ("userId" = $2 or "partnerId" = $2)
+  order by "messageId";
+  `;
+  const params = [userId, partnerId];
+  db.query(sql, params)
+    .then(result => {
+      res.status(200).json(result.rows);
+    })
+    .catch(err => console.error(err));
+});
+
 io.on('connection', socket => {
+  let roomId = 0;
+  const userId = socket.handshake.query.userId;
+  const partnerId = socket.handshake.query.partnerId;
+  if (parseInt(userId) < parseInt(partnerId)) {
+    roomId = parseInt(userId + partnerId);
+  } else {
+    roomId = parseInt(partnerId + userId);
+  }
+  socket.join(roomId);
   socket.on('send-message', data => {
+    io.sockets.to(roomId).emit('message', { senderUserId: parseInt(userId), message: data.message });
     const sql = `
       insert into "Messages" ("messageContent", "userId", "partnerId")
           values ($1, $2, $3)
@@ -142,10 +170,6 @@ io.on('connection', socket => {
     `;
     const params = [data.message, data.userId, data.partnerId];
     db.query(sql, params)
-      .then(result => {
-        // eslint-disable-next-line no-console
-        console.log(result.rows);
-      })
       .catch(err => console.error(err));
   });
 });
