@@ -170,10 +170,6 @@ io.on('connection', socket => {
     `;
     const params = [data.message, data.userId, data.partnerId];
     db.query(sql, params)
-      .then(result => {
-        // eslint-disable-next-line no-console
-        console.log(result.rows);
-      })
       .catch(err => console.error(err));
   });
 });
