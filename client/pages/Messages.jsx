@@ -6,7 +6,8 @@ export default class Messages extends React.Component {
     super(props);
     this.state = {
       message: '',
-      chat: []
+      chat: [],
+      liveChat: []
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -14,10 +15,10 @@ export default class Messages extends React.Component {
   }
 
   componentDidMount() {
-    this.socket = io();
     this.params = new URLSearchParams(this.props.location.search);
     this.userId = this.params.get('userId');
     this.partnerId = this.params.get('partnerId');
+    this.socket = io('/', { query: { userId: this.userId, partnerId: this.partnerId } });
     fetch(`/api/messages/${this.userId}/${this.partnerId}`)
       .then(response => response.json())
       .then(data => {
@@ -26,13 +27,13 @@ export default class Messages extends React.Component {
         });
       })
       .catch(() => console.error('An unexpected error occurred'));
-    this.socket.on('emit-message', (data, socketId) => {
-      console.log('data', data);
-      this.socketId = socketId;
-      if (!socketId) {
-        this.socketId = this.socket.id;
-        console.log('socket.id', this.socket.id);
-      }
+
+    this.socket.on('message', data => {
+      const liveChat = [...this.state.liveChat];
+      liveChat.push(data);
+      this.setState({
+        liveChat: liveChat
+      });
     });
   }
 
@@ -51,13 +52,15 @@ export default class Messages extends React.Component {
   }
 
   handleSend(event) {
-    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId }, this.socketId);
+    this.socket.emit('send-message', { message: this.state.message, userId: this.userId, partnerId: this.partnerId });
     this.setState({ message: '' });
   }
 
   render() {
     const messages = this.state.chat;
     const userId = parseInt(this.userId);
+    const liveChat = this.state.liveChat;
+
     return (
       <>
         <button className="ui icon button basic message-button" onClick={this.handleClick}>
@@ -78,6 +81,20 @@ export default class Messages extends React.Component {
                     <p>{message.messageContent}</p>
                   </div>
                 </div>
+          )
+          }
+          { liveChat.map((liveMessage, index) =>
+            liveMessage.senderUserId === userId
+              ? <div className="row blue-message-right" key={index}>
+                  <div className="ui compact blue message right floated column" >
+                    <p>{liveMessage.message}</p>
+                  </div>
+                </div>
+              : <div className="row blue-message-left" key={index}>
+                  <div className="ui compact blue message left floated column" >
+                    <p>{liveMessage.message}</p>
+                  </div>
+              </div>
           )
           }
         </div>

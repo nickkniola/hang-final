@@ -62,5 +62,6 @@ h3.message-header {
 
 .message-container {
   max-height: calc(100vh - 187px);
+  width: 100vw;
   overflow-y: scroll;
 }

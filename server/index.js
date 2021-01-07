@@ -152,8 +152,24 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
 });
 
 io.on('connection', socket => {
-  socket.on('send-message', (data, socketId) => {
-    socket.to(socketId).emit('emit-message', data, socket.id);
+  // socket.join(socket.id);
+  // socket.on('create-id', obj => {
+  //   console.log('userId', obj.userId);
+  //   console.log('partnerId', obj.partnerId);
+  //   console.log('new id', socket.id);
+  // });
+  let roomId = 0;
+  const userId = socket.handshake.query.userId;
+  const partnerId = socket.handshake.query.partnerId;
+  // console.log('query', socket.handshake.query);
+  if (parseInt(userId) < parseInt(partnerId)) {
+    roomId = parseInt(userId + partnerId);
+  } else {
+    roomId = parseInt(partnerId + userId);
+  }
+  socket.join(roomId);
+  socket.on('send-message', data => {
+    io.sockets.to(roomId).emit('message', { senderUserId: parseInt(userId), message: data.message });
     const sql = `
       insert into "Messages" ("messageContent", "userId", "partnerId")
           values ($1, $2, $3)
