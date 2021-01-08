@@ -31,7 +31,8 @@ export default class SignUp extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        const dataJson = JSON.stringify(data);
+        localStorage.setItem('userData', dataJson);
       })
       .catch(() => console.error('An unexpected error occurred'));
   }
