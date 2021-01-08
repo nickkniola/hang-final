@@ -6,6 +6,7 @@ const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 const errorMiddleware = require('./error-middleware');
+const authorizationMiddleware = require('./authorization-middleware');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL
@@ -17,6 +18,28 @@ const io = require('socket.io')(http);
 
 app.use(staticMiddleware);
 app.use(express.json());
+
+app.post('/api/auth/sign-up', (req, res, next) => {
+  argon2
+    .hash(req.body.password)
+    .then(hashedPassword => {
+      const sql = `
+        insert into "Users" ("firstName", "lastName", "email", "password")
+             values ($1, $2, $3, $4)
+          returning "userId"
+      `;
+      const params = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword];
+      return db.query(sql, params);
+    })
+    .then(result => {
+      const payload = result.rows[0];
+      const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+      res.status(201).json({ token, user: payload });
+    })
+    .catch(err => next(err));
+});
+
+app.use(authorizationMiddleware);
 
 app.post('/api/activities', (req, res, next) => {
   let preferredActivity = req.body.preferredActivity;
@@ -149,26 +172,6 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
   db.query(sql, params)
     .then(result => {
       res.status(200).json(result.rows);
-    })
-    .catch(err => next(err));
-});
-
-app.post('/api/auth/sign-up', (req, res, next) => {
-  argon2
-    .hash(req.body.password)
-    .then(hashedPassword => {
-      const sql = `
-        insert into "Users" ("firstName", "lastName", "email", "password")
-             values ($1, $2, $3, $4)
-          returning "userId"
-      `;
-      const params = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword];
-      return db.query(sql, params);
-    })
-    .then(result => {
-      const payload = result.rows[0];
-      const token = jwt.sign(payload, process.env.TOKEN_SECRET);
-      res.status(201).json({ token, user: payload });
     })
     .catch(err => next(err));
 });
