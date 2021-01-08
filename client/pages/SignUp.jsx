@@ -21,7 +21,19 @@ export default class SignUp extends React.Component {
 
   handleSubmit() {
     event.preventDefault();
-    console.log('submit');
+    const formData = this.state;
+    fetch('/api/auth/sign-up', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(() => console.error('An unexpected error occurred'));
   }
 
   render() {

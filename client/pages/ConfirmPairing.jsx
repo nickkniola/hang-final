@@ -67,7 +67,8 @@ export default class ConfirmPairing extends React.Component {
             activityFound: false
           });
         }
-      });
+      })
+      .catch(() => console.error('An unexpected error occurred'));
   }
 
   handleAccept() {
