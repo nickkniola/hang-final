@@ -2,6 +2,7 @@ require('dotenv/config');
 const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const pg = require('pg');
+const argon2 = require('argon2');
 const fetch = require('node-fetch');
 const errorMiddleware = require('./error-middleware');
 
@@ -151,8 +152,16 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
     .catch(err => console.error(err));
 });
 
-app.post('/api/users', (req, res, next) => {
+app.post('/api/auth/sign-up', (req, res, next) => {
+  // hash password
+  argon2
+    .hash(req.body.password)
+    .then(hashedPassword => {
 
+    });
+  // insert into sql database
+
+  // respond with userId and token
 });
 
 io.on('connection', socket => {
