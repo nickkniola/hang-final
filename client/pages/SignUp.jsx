@@ -34,6 +34,9 @@ export default class SignUp extends React.Component {
         const dataJson = JSON.stringify(data);
         localStorage.setItem('userData', dataJson);
       })
+      .then(() => {
+        this.props.history.push('/pairing/select');
+      })
       .catch(() => console.error('An unexpected error occurred'));
   }
 
