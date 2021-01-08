@@ -1,5 +1,7 @@
 import React from 'react';
 import Menu from './pages/Menu';
+import Main from './pages/Main';
+import SignUp from './pages/SignUp';
 import SelectActivity from './pages/SelectActivity';
 import SelectRandom from './pages/SelectRandom';
 import ConfirmPairing from './pages/ConfirmPairing';
@@ -13,14 +15,16 @@ class App extends React.Component {
     return (
       <div className="container">
       <Menu />
-      <Switch location={this.props.location}>
+        <Switch location={this.props.location}>
+          <Route exact path='/main' component={Main} />
+          <Route exact path='/signup' component={SignUp} />
           <Route exact path='/pairing/select' component={SelectActivity} />
           <Route exact path='/pairing/confirm' component={ConfirmPairing} />
           <Route exact path='/random/select' component={SelectRandom} />
           <Route exact path='/random/confirm' component={ConfirmPairing} />
           <Route exact path='/matches' component={Matches} />
           <Route exact path='/messages' component={Messages} />
-          <Redirect to='/pairing/select' />
+          <Redirect to='/main' />
       </Switch>
       </div>
     );

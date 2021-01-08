@@ -5,9 +5,9 @@ export default class Menu extends React.Component {
   render() {
     return (
       <div className="ui menu">
-        <a className="item">
+        <NavLink className="item" to="/main">
           <img src="/images/hang_logo.png"></img>
-        </a>
+        </NavLink>
         <NavLink className="item" to="/pairing/select" >
           Pairing
         </NavLink>
