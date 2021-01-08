@@ -10,6 +10,7 @@ export default class SignUp extends React.Component {
       password: ''
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange(event) {
@@ -18,10 +19,15 @@ export default class SignUp extends React.Component {
     });
   }
 
+  handleSubmit() {
+    event.preventDefault();
+    console.log('submit');
+  }
+
   render() {
     return (
       <div className="sign-up-container">
-        <form className="ui form">
+        <form className="ui form" onSubmit={this.handleSubmit}>
           <div className="ui segment sign-up-segment">
             <h2 className="secondary-header">Sign Up</h2>
             <div className="field">
