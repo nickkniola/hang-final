@@ -3,6 +3,7 @@ const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const pg = require('pg');
 const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 const errorMiddleware = require('./error-middleware');
 
@@ -62,7 +63,7 @@ app.post('/api/activities', (req, res, next) => {
           }
           const location = locationsFiltered[Math.floor(Math.random() * locationsFiltered.length)];
           const googlePlacesLink = requestSearchText.split('&key=')[0];
-          fetch(`https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_PLACES_API_KEY}&placeid=${location.place_id}`)
+          return fetch(`https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.GOOGLE_PLACES_API_KEY}&placeid=${location.place_id}`)
             .then(response => response.json())
             .then(data => res.json({ responseLocation: location, activityType: activityType, mapUrl: data.result.url, googlePlacesLink: googlePlacesLink }));
         });
@@ -149,19 +150,27 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
     .then(result => {
       res.status(200).json(result.rows);
     })
-    .catch(err => console.error(err));
+    .catch(err => next(err));
 });
 
 app.post('/api/auth/sign-up', (req, res, next) => {
-  // hash password
   argon2
     .hash(req.body.password)
     .then(hashedPassword => {
-
-    });
-  // insert into sql database
-
-  // respond with userId and token
+      const sql = `
+        insert into "Users" ("firstName", "lastName", "email", "password")
+             values ($1, $2, $3, $4)
+          returning "userId"
+      `;
+      const params = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword];
+      return db.query(sql, params);
+    })
+    .then(result => {
+      const payload = result.rows[0];
+      const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+      res.status(201).json({ token, user: payload });
+    })
+    .catch(err => next(err));
 });
 
 io.on('connection', socket => {
