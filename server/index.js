@@ -151,6 +151,10 @@ app.get('/api/messages/:userId/:partnerId', (req, res, next) => {
     .catch(err => console.error(err));
 });
 
+app.post('/api/users', (req, res, next) => {
+
+});
+
 io.on('connection', socket => {
   let roomId = 0;
   const userId = socket.handshake.query.userId;
