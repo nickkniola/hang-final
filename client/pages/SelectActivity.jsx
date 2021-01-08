@@ -14,7 +14,7 @@ export default class SelectActivity extends React.Component {
       externalGoogleMapsUrl: '',
       activityObject: '',
       activeView: 'Pairing',
-      userId: 2,
+      userId: null,
       acceptedActivityObject: '',
       activityFound: true,
       isLoading: true
@@ -43,6 +43,16 @@ export default class SelectActivity extends React.Component {
   }
 
   componentDidMount() {
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    let userId = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+      userId = savedUserData.user.userId;
+    }
+    this.setState({
+      userId: userId
+    });
     const params = new URLSearchParams(this.props.location.search);
     const error = params.get('error');
     const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];

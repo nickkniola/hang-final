@@ -4,19 +4,37 @@ export default class Matches extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 2
+      userId: null
     };
     this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    let userId = this.state.userId;
-    if (this.props.location.search) {
-      const search = this.props.location.search;
-      const params = new URLSearchParams(search);
-      userId = params.get('userId');
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    let token = null;
+    let userId = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+      token = savedUserData.token;
+      userId = savedUserData.user.userId;
     }
-    fetch('/api/matches/' + userId)
+    this.setState({
+      userId: userId
+    });
+    // if (this.props.location.search) {
+    //   const search = this.props.location.search;
+    //   const params = new URLSearchParams(search);
+    //   userId = params.get('userId');
+    // }
+
+    fetch('/api/matches/' + userId, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        'x-access-token': token
+      }
+    })
       .then(response => response.json())
       .then(data => {
         this.setState({

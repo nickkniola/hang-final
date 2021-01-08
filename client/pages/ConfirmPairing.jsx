@@ -13,10 +13,17 @@ export default class ConfirmPairing extends React.Component {
   }
 
   componentDidMount() {
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    let userId = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+      userId = savedUserData.user.userId;
+    }
     const search = this.props.location.search;
     const params = new URLSearchParams(search);
     const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
-    const formData = { userId: 2 };
+    const formData = { userId: userId };
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
       const value = params.get(field);
@@ -35,10 +42,18 @@ export default class ConfirmPairing extends React.Component {
 
   handleSubmit() {
     const formData = this.state;
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    let token = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+      token = savedUserData.token;
+    }
     fetch('/api/activities', {
       method: 'POST',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
+        'x-access-token': token
       },
       body: JSON.stringify(formData)
     })
@@ -73,11 +88,19 @@ export default class ConfirmPairing extends React.Component {
 
   handleAccept() {
     const formData = this.state;
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    let token = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+      token = savedUserData.token;
+    }
     if (this.state.responseLocation) {
       fetch('/api/activity', {
         method: 'POST',
         headers: {
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'x-access-token': token
         },
         body: JSON.stringify(formData)
       })
@@ -93,7 +116,8 @@ export default class ConfirmPairing extends React.Component {
       fetch(`/api/activities/${this.state.activityObject.activityId}`, {
         method: 'PUT',
         headers: {
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'x-access-token': token
         },
         body: JSON.stringify(formData)
       })

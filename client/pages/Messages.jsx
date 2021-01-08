@@ -21,7 +21,19 @@ export default class Messages extends React.Component {
     this.userId = this.params.get('userId');
     this.partnerId = this.params.get('partnerId');
     this.socket = io('/', { query: { userId: this.userId, partnerId: this.partnerId } });
-    fetch(`/api/messages/${this.userId}/${this.partnerId}`)
+    const savedUserDataJson = localStorage.getItem('userData');
+    let savedUserData = null;
+    if (savedUserDataJson !== null) {
+      savedUserData = JSON.parse(savedUserDataJson);
+    }
+    const token = savedUserData.token;
+    fetch(`/api/messages/${this.userId}/${this.partnerId}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        'x-access-token': token
+      }
+    })
       .then(response => response.json())
       .then(data => {
         this.setState({
