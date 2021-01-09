@@ -33,7 +33,7 @@ CREATE TABLE "Activities" (
 	"date" TEXT NOT NULL,
 	"time" TEXT NOT NULL,
 	"hostId" integer NOT NULL,
-	"guestId" integer NOT NULL,
+	"guestId" integer,
 	CONSTRAINT "Activities_pk" PRIMARY KEY ("activityId")
 ) WITH (
   OIDS=FALSE
@@ -76,10 +76,6 @@ CREATE TABLE "Messages" (
 ALTER TABLE "Users" ADD CONSTRAINT "Users_fk0" FOREIGN KEY ("availabilityTypeId") REFERENCES "availabilityTypes"("availabilityTypeId");
 
 ALTER TABLE "Activities" ADD CONSTRAINT "Activities_fk0" FOREIGN KEY ("activityTypeId") REFERENCES "activityTypes"("activityTypeId");
-ALTER TABLE "Activities" ADD CONSTRAINT "Activities_fk1" FOREIGN KEY ("hostId") REFERENCES "Users"("userId");
-ALTER TABLE "Activities" ADD CONSTRAINT "Activities_fk2" FOREIGN KEY ("guestId") REFERENCES "Users"("userId");
 
-
-
-ALTER TABLE "Messages" ADD CONSTRAINT "Messages_fk0" FOREIGN KEY ("hostId") REFERENCES "Users"("userId");
-ALTER TABLE "Messages" ADD CONSTRAINT "Messages_fk1" FOREIGN KEY ("guestId") REFERENCES "Users"("userId");
+ALTER TABLE "Messages" ADD CONSTRAINT "Messages_fk0" FOREIGN KEY ("userId") REFERENCES "Users"("userId");
+ALTER TABLE "Messages" ADD CONSTRAINT "Messages_fk1" FOREIGN KEY ("partnerId") REFERENCES "Users"("userId");

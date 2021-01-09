@@ -1,5 +1,4 @@
 import React from 'react';
-import AppContext from './app-context';
 
 export default class SelectActivity extends React.Component {
   constructor(props) {
@@ -116,4 +115,3 @@ export default class SelectActivity extends React.Component {
     );
   }
 }
-SelectActivity.contextType = AppContext;

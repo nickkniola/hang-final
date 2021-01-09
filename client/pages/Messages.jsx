@@ -1,6 +1,5 @@
 import React from 'react';
 import io from 'socket.io-client';
-import AppContext from './app-context';
 
 export default class Messages extends React.Component {
   constructor(props) {
@@ -22,7 +21,8 @@ export default class Messages extends React.Component {
     this.userId = this.params.get('userId');
     this.partnerId = this.params.get('partnerId');
     this.socket = io('/', { query: { userId: this.userId, partnerId: this.partnerId } });
-    const token = this.context.token;
+    const data = JSON.parse(localStorage.getItem('userData'));
+    const token = data.token;
     fetch(`/api/messages/${this.userId}/${this.partnerId}`, {
       method: 'GET',
       headers: {
@@ -126,4 +126,3 @@ export default class Messages extends React.Component {
     );
   }
 }
-Messages.contextType = AppContext;

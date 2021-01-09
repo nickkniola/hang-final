@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect } from 'react-router';
-import AppContext from './app-context';
 
 export default class ConfirmPairing extends React.Component {
   constructor(props) {
@@ -14,7 +13,8 @@ export default class ConfirmPairing extends React.Component {
   }
 
   componentDidMount() {
-    const userId = this.context.user.userId;
+    const data = JSON.parse(localStorage.getItem('userData'));
+    const userId = data.user.userId;
     const search = this.props.location.search;
     const params = new URLSearchParams(search);
     const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
@@ -254,4 +254,3 @@ export default class ConfirmPairing extends React.Component {
     );
   }
 }
-ConfirmPairing.contextType = AppContext;
