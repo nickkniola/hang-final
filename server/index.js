@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 const errorMiddleware = require('./error-middleware');
 const authorizationMiddleware = require('./authorization-middleware');
+const path = require('path');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL
@@ -24,11 +25,11 @@ app.post('/api/auth/sign-up', (req, res, next) => {
     .hash(req.body.password)
     .then(hashedPassword => {
       const sql = `
-        insert into "Users" ("firstName", "lastName", "email", "password")
-             values ($1, $2, $3, $4)
+        insert into "Users" ("firstName", "lastName", "email", "password", "profileImage")
+             values ($1, $2, $3, $4, $5)
           returning "userId"
       `;
-      const params = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword];
+      const params = [req.body.firstName, req.body.lastName, req.body.email, hashedPassword, '/images/placeholder-user.jpg'];
       return db.query(sql, params);
     })
     .then(result => {
@@ -196,6 +197,12 @@ io.on('connection', socket => {
     const params = [data.message, data.userId, data.partnerId];
     db.query(sql, params)
       .catch(err => console.error(err));
+  });
+});
+
+app.use((req, res) => {
+  res.sendFile('/index.html', {
+    root: path.join(__dirname, 'public')
   });
 });
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import AppContext from './app-context';
 
 export default class Matches extends React.Component {
   constructor(props) {
@@ -11,26 +10,31 @@ export default class Matches extends React.Component {
   }
 
   componentDidMount() {
-    const userId = this.context.user.userId;
-    const token = this.context.token;
-    this.setState({
-      userId: userId
-    });
-    fetch('/api/matches/' + userId, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json',
-        'x-access-token': token
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          activities: data.activities,
-          matches: data.matches
-        });
+    const data = JSON.parse(localStorage.getItem('userData'));
+    let userId = null;
+    let token = null;
+    if (data) {
+      userId = data.user.userId;
+      token = data.token;
+      this.setState({
+        userId: userId
+      });
+      fetch('/api/matches/' + userId, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'x-access-token': token
+        }
       })
-      .catch(() => console.error('An unexpected error occurred'));
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            activities: data.activities,
+            matches: data.matches
+          });
+        })
+        .catch(() => console.error('An unexpected error occurred'));
+    }
   }
 
   handleClick(event) {
@@ -96,4 +100,3 @@ export default class Matches extends React.Component {
     );
   }
 }
-Matches.contextType = AppContext;
