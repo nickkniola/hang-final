@@ -1,5 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client';
+import AppContext from './app-context';
 
 export default class Messages extends React.Component {
   constructor(props) {
@@ -21,12 +22,7 @@ export default class Messages extends React.Component {
     this.userId = this.params.get('userId');
     this.partnerId = this.params.get('partnerId');
     this.socket = io('/', { query: { userId: this.userId, partnerId: this.partnerId } });
-    const savedUserDataJson = localStorage.getItem('userData');
-    let savedUserData = null;
-    if (savedUserDataJson !== null) {
-      savedUserData = JSON.parse(savedUserDataJson);
-    }
-    const token = savedUserData.token;
+    const token = this.context.token;
     fetch(`/api/messages/${this.userId}/${this.partnerId}`, {
       method: 'GET',
       headers: {
@@ -40,7 +36,7 @@ export default class Messages extends React.Component {
           chat: data
         });
       })
-      .catch(() => console.error('An unexpected error occurred'));
+      .catch(() => console.error('An unexpected error occurred.'));
     this.socket.on('message', data => {
       const liveChat = [...this.state.liveChat];
       liveChat.push(data);
@@ -130,3 +126,4 @@ export default class Messages extends React.Component {
     );
   }
 }
+Messages.contextType = AppContext;

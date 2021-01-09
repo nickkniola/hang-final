@@ -1,4 +1,5 @@
 import React from 'react';
+import AppContext from './app-context';
 
 export default class Matches extends React.Component {
   constructor(props) {
@@ -10,24 +11,11 @@ export default class Matches extends React.Component {
   }
 
   componentDidMount() {
-    const savedUserDataJson = localStorage.getItem('userData');
-    let savedUserData = null;
-    let token = null;
-    let userId = null;
-    if (savedUserDataJson !== null) {
-      savedUserData = JSON.parse(savedUserDataJson);
-      token = savedUserData.token;
-      userId = savedUserData.user.userId;
-    }
+    const userId = this.context.user.userId;
+    const token = this.context.token;
     this.setState({
       userId: userId
     });
-    // if (this.props.location.search) {
-    //   const search = this.props.location.search;
-    //   const params = new URLSearchParams(search);
-    //   userId = params.get('userId');
-    // }
-
     fetch('/api/matches/' + userId, {
       method: 'GET',
       headers: {
@@ -108,3 +96,4 @@ export default class Matches extends React.Component {
     );
   }
 }
+Matches.contextType = AppContext;

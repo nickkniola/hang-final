@@ -14,7 +14,7 @@ export default class SelectRandom extends React.Component {
       externalGoogleMapsUrl: '',
       activityObject: '',
       activeView: 'Pairing',
-      userId: 1,
+      userId: null,
       acceptedActivityObject: '',
       activityFound: true,
       isLoading: null
@@ -99,5 +99,4 @@ export default class SelectRandom extends React.Component {
       </div>
     );
   }
-
 }

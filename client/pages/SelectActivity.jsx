@@ -1,4 +1,5 @@
 import React from 'react';
+import AppContext from './app-context';
 
 export default class SelectActivity extends React.Component {
   constructor(props) {
@@ -43,16 +44,6 @@ export default class SelectActivity extends React.Component {
   }
 
   componentDidMount() {
-    const savedUserDataJson = localStorage.getItem('userData');
-    let savedUserData = null;
-    let userId = null;
-    if (savedUserDataJson !== null) {
-      savedUserData = JSON.parse(savedUserDataJson);
-      userId = savedUserData.user.userId;
-    }
-    this.setState({
-      userId: userId
-    });
     const params = new URLSearchParams(this.props.location.search);
     const error = params.get('error');
     const fields = ['city', 'neighborhood', 'state', 'date', 'activityType', 'preferredActivity'];
@@ -125,3 +116,4 @@ export default class SelectActivity extends React.Component {
     );
   }
 }
+SelectActivity.contextType = AppContext;

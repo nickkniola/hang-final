@@ -1,4 +1,5 @@
 import React from 'react';
+import AppContext from './app-context';
 
 export default class SignUp extends React.Component {
   constructor(props) {
@@ -71,3 +72,4 @@ export default class SignUp extends React.Component {
     );
   }
 }
+SignUp.contextType = AppContext;
