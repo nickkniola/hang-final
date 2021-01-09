@@ -11,10 +11,10 @@ create schema "public";
 	"lastName" TEXT NOT NULL,
 	"email" TEXT NOT NULL,
 	"password" TEXT NOT NULL,
-	"profileImage" TEXT NOT NULL,
-	"bio" TEXT NOT NULL,
-	"interests" TEXT NOT NULL,
-	"availabilityTypeId" integer NOT NULL,
+	"profileImage" TEXT,
+	"bio" TEXT,
+	"interests" TEXT,
+	"availabilityTypeId" integer,
 	CONSTRAINT "Users_pk" PRIMARY KEY ("userId")
 ) WITH (
   OIDS=FALSE

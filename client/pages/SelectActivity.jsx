@@ -1,4 +1,5 @@
 import React from 'react';
+import AppContext from './app-context';
 
 export default class SelectActivity extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class SelectActivity extends React.Component {
       externalGoogleMapsUrl: '',
       activityObject: '',
       activeView: 'Pairing',
-      userId: 2,
+      userId: null,
       acceptedActivityObject: '',
       activityFound: true,
       isLoading: true
@@ -115,3 +116,4 @@ export default class SelectActivity extends React.Component {
     );
   }
 }
+SelectActivity.contextType = AppContext;

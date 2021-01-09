@@ -1,22 +1,28 @@
 import React from 'react';
+import AppContext from './app-context';
 
 export default class Matches extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 2
+      userId: null
     };
     this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
-    let userId = this.state.userId;
-    if (this.props.location.search) {
-      const search = this.props.location.search;
-      const params = new URLSearchParams(search);
-      userId = params.get('userId');
-    }
-    fetch('/api/matches/' + userId)
+    const userId = this.context.user.userId;
+    const token = this.context.token;
+    this.setState({
+      userId: userId
+    });
+    fetch('/api/matches/' + userId, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        'x-access-token': token
+      }
+    })
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -90,3 +96,4 @@ export default class Matches extends React.Component {
     );
   }
 }
+Matches.contextType = AppContext;
