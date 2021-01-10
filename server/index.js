@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 const errorMiddleware = require('./error-middleware');
 const authorizationMiddleware = require('./authorization-middleware');
-const path = require('path');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL
@@ -38,12 +37,6 @@ app.post('/api/auth/sign-up', (req, res, next) => {
       res.status(201).json({ token, user: payload });
     })
     .catch(err => next(err));
-});
-
-app.use((req, res) => {
-  res.sendFile('/index.html', {
-    root: path.join(__dirname, 'public')
-  });
 });
 
 app.use(authorizationMiddleware);
