@@ -46,16 +46,16 @@ app.post('/api/activities', (req, res, next) => {
   let preferredActivity = req.body.preferredActivity;
   let activityType = req.body.activityType;
   const userId = req.body.userId;
-  const neighborhood = req.body.neighborhood.replaceAll(' ', '+');
-  const city = req.body.city.replaceAll(' ', '+');
-  const state = req.body.state.replaceAll(' ', '+');
+  const neighborhood = req.body.neighborhood.split(' ').join('+');
+  const city = req.body.city.split(' ').join('+');
+  const state = req.body.state.split(' ').join('+');
   if (!activityType) {
     const activityTypes = ['Food', 'Museum', 'Sports'];
     const randomIndex = Math.floor(Math.random() * 3);
     activityType = activityTypes[randomIndex];
     preferredActivity = activityTypes[randomIndex];
   } else {
-    preferredActivity = req.body.preferredActivity.replaceAll(' ', '+');
+    preferredActivity = req.body.preferredActivity.split(' ').join('+');
   }
   const sql = `
     select *
