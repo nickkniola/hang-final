@@ -40,6 +40,12 @@ app.post('/api/auth/sign-up', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.use((req, res) => {
+  res.sendFile('/index.html', {
+    root: path.join(__dirname, 'public')
+  });
+});
+
 app.use(authorizationMiddleware);
 
 app.post('/api/activities', (req, res, next) => {
@@ -197,12 +203,6 @@ io.on('connection', socket => {
     const params = [data.message, data.userId, data.partnerId];
     db.query(sql, params)
       .catch(err => console.error(err));
-  });
-});
-
-app.use((req, res) => {
-  res.sendFile('/index.html', {
-    root: path.join(__dirname, 'public')
   });
 });
 
