@@ -1,11 +1,11 @@
 import React from 'react';
-import Menu from './pages/Menu';
+import Menu from './pages/menu';
 import Main from './pages/Main';
 import SignUp from './pages/SignUp';
 import SelectActivity from './pages/SelectActivity';
 import SelectRandom from './pages/SelectRandom';
 import ConfirmPairing from './pages/ConfirmPairing';
-import Matches from './pages/Matches';
+import Matches from './pages/matches';
 import Messages from './pages/Messages';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
