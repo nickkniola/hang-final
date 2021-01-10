@@ -15,7 +15,7 @@ export default class Main extends React.Component {
       <div className="main-container">
         <div className="text-container">
           <h1 className="header-main"><img className="header-logo" src="images/hang_logo.png"></img>Hang</h1>
-          <p className="subtitle-main">The only web app which makes a plan for you!</p>
+          <p className="subtitle-main">The only web app which makes plans for you!</p>
         </div>
         <div className="button-container">
           <button className="ui primary button sign-up-button" type="button" onClick={this.handleClick}>Sign Up</button>
